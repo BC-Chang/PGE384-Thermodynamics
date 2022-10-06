@@ -8,34 +8,8 @@ Created on Tue Oct  4 14:24:46 2022
 import numpy as np
 import matplotlib.pyplot as plt
 
-def _vdw(T: np.ndarray, V: np.ndarray, a: np.float32, b: np.float32,) -> np.ndarray:
-    """
-    van der Waals equation of state using SI units
-    :param T: Temperature (K)
-    :param V: Molar Volume (m3 / mol)
-    :param a: Gas constant
-    :param b: Gas constant
-    :return: Pressure (Pa)
-    """
 
-    R = 8.314  # Universal gas constant (J/K-mol)
-    assert V != b, "V = b, divide by 0 error!"
-    assert V > 0, "Molar volume must be greater than 0!"
-
-    return R*T / (V - b) - a / V**2
-
-def _get_compression_factor(P, V, T):
-    """
-    Get compression factor, Z, with P, V, and T in SI
-    :param P: Pressure (Pa)
-    :param V: Molar volume (m3 / mol)
-    :param T: Temperature (K)
-    :return: Compression factor (Z)
-    """
-    R = 8.314 # Universal gas constant (J/K-mol)
-    return P * V / (R * T)
-
-def cubic_eos(P, V, T,
+def cubic_eos(P, T,
               Pc: np.float32 = 4.600E6, Tc: np.float32 = 190.6, w: np.float32 = 0.008,
               eos: str = 'PR'):
     """
@@ -47,21 +21,35 @@ def cubic_eos(P, V, T,
     :param Tc: Temperature at critical point (K). Default = 190.6 K (Methane)
     :param w: Acentric factor. Default = 0.008 (Methane)
     :param eos: Desired equation of state. Default = Peng-Robinson
-    :return: Coefficients for specified equation of state
+    :return: Coefficients for specified equation of state, a and b.
     """
     eos_dict = {'vdw': _van_der_waals_cubic,
                 'PR': _peng_robinson_cubic,
                 'RK': _redlich_kwong_cubic,
                 'S': _soave_cubic}
+
     ab_dict = {'vdw': _van_der_waals_ab,
                'PR': _peng_robinson_ab}
 
-    Z = _get_compression_factor(P, V, T)
     a, b = ab_dict[eos](Pc, Tc, T, w)
-    print(a, b)
-    alpha, beta, gamma = eos_dict[eos](P, V, a, b)
 
-    return alpha, beta, gamma, Z
+    alpha, beta, gamma = eos_dict[eos](P, T, a, b)
+
+    return alpha, beta, gamma, a, b
+
+
+def _get_compressibility_factor(P, V, T, R=8.314):
+    """
+    Get compression factor, Z, with P, V, and T in SI
+    :param P: Pressure (Pa)
+    :param V: Molar volume (m3 / mol)
+    :param T: Temperature (K)
+    :return: Compression factor (Z)
+    """
+
+    return P * V / (R * T)
+
+
 def _van_der_waals_cubic(P, T, a, b):
     """
     Coefficients for the cubic form of Redlich-Kwong equation of state
@@ -71,6 +59,7 @@ def _van_der_waals_cubic(P, T, a, b):
     :param b:
     :return:
     """
+
     A, B = _get_A_B(P, T, a, b)
 
     alpha = -1 - B
@@ -97,6 +86,7 @@ def _peng_robinson_cubic(P, T, a, b):
     gamma = -1 * A * B + B**2 + B**3
 
     return alpha, beta, gamma
+
 
 def _redlich_kwong_cubic(P, T, a, b):
     """
@@ -135,6 +125,7 @@ def _soave_cubic(P, T, a, b):
 
     return alpha, beta, gamma
 
+
 def _get_A_B(P, T, a, b, is_RK: bool = False):
     """
     Get the intermediate A & B parameters for cubic forms of equations of state
@@ -155,6 +146,7 @@ def _get_A_B(P, T, a, b, is_RK: bool = False):
 
     return A, B
 
+
 def _van_der_waals_ab(Pc, Tc, *args, **kwargs):
     """
     Calculate a & b for van der Waals equation of state
@@ -166,6 +158,7 @@ def _van_der_waals_ab(Pc, Tc, *args, **kwargs):
     a = 27 * R**2 * Tc**2 * 0.015625 / Pc
     b = R * Tc * 0.125 / Pc
     return a, b
+
 
 def _peng_robinson_ab(Pc, Tc, T, w):
     """
@@ -182,6 +175,7 @@ def _peng_robinson_ab(Pc, Tc, T, w):
     b = 0.07780 * R * Tc / Pc
 
     return a, b
+
 
 if __name__ == "__main__":
     pass

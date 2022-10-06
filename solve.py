@@ -24,11 +24,12 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
 
     return x1, x2, x3
 
+
 if __name__ == '__main__':
     alpha, beta, gamma, Z = cubic_eos(P=2.E6, V=1.293E-3, T=310.93, eos='vdw')
-    V = np.linspace(-100, 100, 1000)
+    V = np.linspace(-0, 1.6, 1000)
     P = V**3 + alpha*V**2 + beta*V + gamma
-    plt.plot(V, P, 'o')
+    plt.plot(V, P, '-')
 
     print(alpha, beta, gamma)
     x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)

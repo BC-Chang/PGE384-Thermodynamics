@@ -1,0 +1,4 @@
+---
+P: 2000000  # Pressure (Pa)
+T: 310.93  # Temperature (K)
+eos: "vdw"  # Equation of state — currently only vdw is fully implemented

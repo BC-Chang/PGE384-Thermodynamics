@@ -1,9 +1,9 @@
 import yaml
 import sys
-
+import datetime
 
 # Read in yaml file
-def read_yaml(filename: str='input_file.yml',) -> dict:
+def read_input(filename: str='input_file.yml',) -> dict:
     """
     Read in yaml file
     :param filename: A string with path to input file
@@ -11,10 +11,11 @@ def read_yaml(filename: str='input_file.yml',) -> dict:
     """
     with open(filename, 'r') as f:
         return yaml.load(f, Loader=yaml.FullLoader)
+    
 
 
 # Write to output file
-def pout(msg: str, filename: str='outfile.txt') -> None:
+def pout(msg: str, filename: str='HW4_Output/outfile.txt') -> None:
     """
     Write to output file
     :param msg: Message to be logged
@@ -22,5 +23,6 @@ def pout(msg: str, filename: str='outfile.txt') -> None:
     :return: None
     """
     with open(filename, 'a') as f:
-        f.write(msg + '\n')
-        return
+        f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\t\t' + msg + '\n')
+    
+    return

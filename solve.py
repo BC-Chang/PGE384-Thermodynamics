@@ -1,6 +1,4 @@
 import numpy as np
-from eos import cubic_eos
-import matplotlib.pyplot as plt
 
 def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> list:
     """
@@ -26,6 +24,11 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
 
 
 if __name__ == '__main__':
+
+    from eos import cubic_eos
+    import matplotlib.pyplot as plt
+    from io import read_input
+    
     alpha, beta, gamma, Z = cubic_eos(P=2.E6, V=1.293E-3, T=310.93, eos='vdw')
     V = np.linspace(-0, 1.6, 1000)
     P = V**3 + alpha*V**2 + beta*V + gamma

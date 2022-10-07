@@ -22,6 +22,10 @@ def main():
     # Print the cubic coefficients to output file
     pout("-"*53)
     pout(f"Homework 4 Output")
+    pout(f"P = {input_dict['P']} Pa")
+    pout(f"T = {input_dict['T']} K")
+    pout(f"EoS = {input_dict['eos']}")
+    pout("-"*53)
     pout(f"Coefficients: ")
     pout(f"\t{alpha = :.5f}")
     pout(f"\t{beta = :.5f}")
@@ -52,7 +56,7 @@ def main():
     
     # Write compressibility factor and P to an Excel File
     df = pd.DataFrame(np.array([Z, P]).T, columns=['Z', 'Cubic EoS'])
-    df.to_excel('HW4_Output/Graphical_Solution.xlsx')
+    df.to_excel("HW4_Output/Graphical_Solution.xlsx")
     
     plt.figure(dpi=400)
     plt.plot(Z, P, 'b-')
@@ -63,7 +67,7 @@ def main():
     plt.ylabel('Cubic EoS')
     plt.xlim([0, 1.6])
     plt.ylim([-0.2, 1.5])
-    plt.savefig("HW4_Output/graphical_method.png")
+    plt.savefig(f"HW4_Output/cubic_eos_plot_{input_dict['P']*10**-6}MPa_{input_dict['T']}K.png")
 
     return
 

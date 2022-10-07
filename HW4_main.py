@@ -4,6 +4,7 @@ from solve import solve_cardanos
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout
 import os
+import pandas as pd
 
 
 def main():
@@ -41,29 +42,29 @@ def main():
     # Calculate molar volume
     molar_V = x1*8.314*input_dict['T'] / input_dict['P']
     
-    # Proint molar volume to output file
+    # Print molar volume to output file
     pout(f"Molar Volume = {molar_V:.6f} m3/mol")
     pout("-"*53)
     
-    # Graph cubic EoS vs. Z
+    # Create array of cubic EoS vs. Z
     Z = np.linspace(0, 1.6, 1000)
     P = Z**3 + alpha*Z**2 + beta*Z + gamma
+    
+    # Write compressibility factor and P to an Excel File
+    df = pd.DataFrame(np.array([Z, P]).T, columns=['Z', 'Cubic EoS'])
+    df.to_excel('HW4_Output/Graphical_Solution.xlsx')
+    
     plt.figure(dpi=400)
     plt.plot(Z, P, 'b-')
-    
-    # Plot red line for Z root
-    plt.plot([x1, x1], [-.25, 0], 'r--')
-    
-    # Plot y = 0 axis
-    plt.plot([0, 1.6], [0, 0], 'k-')
-    
+    plt.plot([x1, x1], [-.25, 0], 'r--')  # Plot red line for Z root
+    plt.plot([0, 1.6], [0, 0], 'k-')  # Plot y = 0 axis
     plt.grid(True)
     plt.xlabel('Compressibility Factor (Z)')
     plt.ylabel('Cubic EoS')
     plt.xlim([0, 1.6])
     plt.ylim([-0.2, 1.5])
     plt.savefig("HW4_Output/graphical_method.png")
-    
+
     return
 
 

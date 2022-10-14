@@ -15,7 +15,7 @@ def _get_delta(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> li
     
     return D, E, delta
 
-def _delta0(b, D, *args, **kwargs):
+def _delta_0(b, D, *args, **kwargs):
     """
     Find roots when delta = 0. There are 3 real roots with at least two equal roots
     :param b: x^2 coefficient
@@ -30,21 +30,34 @@ def _delta0(b, D, *args, **kwargs):
 
 def _delta_positive(b, D, delta, *args, **kwargs):
     """
-    Find roots when delta = 0. There is 1 real root and 2 complex roots
+    Find roots when delta > 0. There is 1 real root and 2 complex roots
     :param b: x^2 coefficient
     :param D: D from appendix of Wilcezek-Vera et al. (2015)
     :return: List of 1 real root and 2 complex roots
     """
-    F = (-D + delta**0.5)**(1/3)
-    G = (-D - delta**0.5)**(1/3)
+    F = ((-D) + delta**0.5)**(1/3)
+    G = ((-D) - delta**0.5)
+    if G < 0:
+        G = -(-G)**(1./3)
+    else:
+        G = G**(1./3)
     
     x1 = F + G - (b/3)
-    x2 = -(0.5*(F + G) + b/3) + 3**0.5*0.5*(F-G)*(-1)**0.5
-    x3 = -(0.5*(F + G) + b/3) + 3**0.5*0.5*(F-G)*(-1)**0.5
+    x2 = -(0.5*(F + G) + b/3) + 3**(0.5)*0.5j*(F-G)#*(-1)**0.5
+    x3 = -(0.5*(F + G) + b/3) - 3**(0.5)*0.5j*(F-G)#*(-1)**0.5
     
     return x1, x2, x3
 
 def _delta_negative(b, D, E, *args, **kwargs):
+    """
+    Find roots when delta < 0. There are 3 real and unequal roots
+    :param b: x^2 coefficient
+    :param D: D from appendix of Wilcezek-Vera et al. (2015)
+    :param E:
+    :param args:
+    :param kwargs:
+    :return:
+    """
     theta = np.arccos(-D/(-E**3)**0.5)
     
     x1 = 2*(-E)**(0.5)*np.cos(theta / 3) - b/3
@@ -53,7 +66,7 @@ def _delta_negative(b, D, E, *args, **kwargs):
     
     return x1, x2, x3
     
-def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> list:
+def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> tuple:
     """
     Find cubic roots from polynomial of form a*x^3 + b*x^2 + c*x + d using Cardano's equation
     :param a: x^3 coefficient
@@ -63,8 +76,9 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
     :return: A list of length 3 corresponding to cubic roots
     """
     assert a != 0, "a cannot be 0. Use quadratic formula if it is"
-    
+
     D, E, delta = _get_delta(a, b, c, d)
+
     
     if delta == 0:
         return _delta_0(b, D)

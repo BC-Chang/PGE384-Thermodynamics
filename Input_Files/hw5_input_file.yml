@@ -1,0 +1,4 @@
+---
+P: 30000000 # Final Pressure (Pa)
+T: 423.15  # Final Temperature (K)
+eos: "PR"  # Equation of state — currently only vdw is fully implemented

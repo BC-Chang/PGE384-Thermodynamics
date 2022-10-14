@@ -169,9 +169,13 @@ def _peng_robinson_ab(Pc, Tc, T, w):
     :return:
     """
     R = 8.314
-    kappa = 0.37464 + 1.54226 * w - 0.26992 * w**2
+    if w <= 0.491:
+        kappa = 0.37464 + 1.54226 * w - 0.26992 * w**2
+    else:
+        kappa = 0.379642 + 1.48503 * w - 0.164423 * w**2 + 0.16666*w**3
+
     alpha = (1 + kappa * (1 - np.sqrt(T / Tc)))
-    a = 0.45724 * R**2 * Tc**2 * alpha / Pc
+    a = 0.47524 * R**2 * Tc**2 * alpha**2 / Pc
     b = 0.07780 * R * Tc / Pc
 
     return a, b

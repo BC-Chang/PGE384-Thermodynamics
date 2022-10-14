@@ -15,7 +15,7 @@ def read_input(filename: str='input_file.yml',) -> dict:
 
 
 # Write to output file
-def pout(msg: str, filename: str='HW4_Output/outfile.txt') -> None:
+def pout(msg: str, filename: str='HW5_Output/outfile.txt') -> None:
     """
     Write to output file
     :param msg: Message to be logged

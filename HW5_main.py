@@ -3,6 +3,7 @@ from eos import cubic_eos
 from solve import solve_cardanos
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout
+from pr_utils import da_dT, entropy_departure, enthalpy_departure
 import os
 import pandas as pd
 
@@ -18,8 +19,8 @@ def main():
     input_dict = read_input(filename="Input_Files/hw5_input_file.yml")
 
     # Find the coefficients of the specified cubic EoS at given pressure and temperature
-    alpha, beta, gamma, a, b = cubic_eos(P=input_dict["P"], T=input_dict["T"], eos=input_dict['eos'],
-                                         Pc=7.376E6, Tc=304.2, w=0.225)
+    alpha, beta, gamma, a, b, alph, kapp = cubic_eos(P=input_dict["P"], T=input_dict["T"], eos=input_dict['eos'],
+                                                       Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
 
     # Print the cubic coefficients to output file
     pout("*" * 53)
@@ -54,7 +55,7 @@ def main():
 
     # Print molar volume to output file
     pout(f"Molar Volume = {molar_V:.6f} m3/mol")
-    pout("* " * 53)
+    pout("-" * 53)
 
     # Create array of cubic EoS vs. Z
     Z = np.linspace(0, 1.6, 1000)
@@ -74,6 +75,17 @@ def main():
     plt.xlim([0, 1.6])
     plt.ylim([-0.2, 1.5])
     plt.savefig(f"{output_path}/cubic_eos_plot_{input_dict['P'] * 10 ** -6}MPa_{input_dict['T']}K.png")
+
+    # Calculate entropy and enthalpy departure for PR equation of state
+    dadT = da_dT(input_dict["Tc"], input_dict["Pc"], input_dict["T"], alph, kapp)
+
+    B = b*input_dict["P"]/(8.314*input_dict["T"])
+    hdep = enthalpy_departure(input_dict["T"], x1, dadT, a, b, B)
+
+    sdep = entropy_departure(x1, dadT, b, B)
+    pout(f"Enthalpy Departure = {hdep:.6f}")
+    pout(f"Entropy Departure = {sdep:.6f}")
+    pout("-" * 53)
 
     return
 

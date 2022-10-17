@@ -31,11 +31,11 @@ def cubic_eos(P, T,
     ab_dict = {'vdw': _van_der_waals_ab,
                'PR': _peng_robinson_ab}
 
-    a, b = ab_dict[eos](Pc, Tc, T, w)
+    a, b, alph, kapp = ab_dict[eos](Pc, Tc, T, w)
 
     alpha, beta, gamma = eos_dict[eos](P, T, a, b)
 
-    return alpha, beta, gamma, a, b
+    return alpha, beta, gamma, a, b, alph, kapp
 
 
 def _get_compressibility_factor(P, V, T, R=8.314):
@@ -157,7 +157,9 @@ def _van_der_waals_ab(Pc, Tc, *args, **kwargs):
     R = 8.314  # Universal Gas Constant
     a = 27 * R**2 * Tc**2 * 0.015625 / Pc
     b = R * Tc * 0.125 / Pc
-    return a, b
+    alpha = 0.
+    kappa = 0.
+    return a, b, alpha, kappa
 
 
 def _peng_robinson_ab(Pc, Tc, T, w):
@@ -175,10 +177,10 @@ def _peng_robinson_ab(Pc, Tc, T, w):
         kappa = 0.379642 + 1.48503 * w - 0.164423 * w**2 + 0.16666*w**3
 
     alpha = (1 + kappa * (1 - np.sqrt(T / Tc)))
-    a = 0.47524 * R**2 * Tc**2 * alpha**2 / Pc
+    a = 0.45724 * R**2 * Tc**2 * alpha**2 / Pc
     b = 0.07780 * R * Tc / Pc
 
-    return a, b
+    return a, b, alpha**2, kappa
 
 
 if __name__ == "__main__":

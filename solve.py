@@ -12,7 +12,6 @@ def _get_delta(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> li
     D = (b/3)**3 - b*c/6 + d*0.5
     E = c/3 - (b/3)**2
     delta = D**2 + E**3
-    print(delta)
     return D, E, delta
 
 def _delta_0(b, D, *args, **kwargs):

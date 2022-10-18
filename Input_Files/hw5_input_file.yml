@@ -1,6 +1,6 @@
 ---
-P: 5000000  # Final Pressure (Pa)
-T: 423.15  # Final Temperature (K)
+P: 30000000  # Pressure (Pa)
+T: 423.15  # Temperature (K)
 Pc: 7376000  # Critical Pressure (Pa)
 Tc: 304.25  # Critical Temperature (K)
 w: 0.225  # Acentric factor

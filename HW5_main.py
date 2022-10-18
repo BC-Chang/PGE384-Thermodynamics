@@ -83,8 +83,8 @@ def main():
     hdep = enthalpy_departure(input_dict["T"], x1, dadT, a, b, B)
 
     sdep = entropy_departure(x1, dadT, b, B)
-    pout(f"Enthalpy Departure = {hdep:.6f}")
-    pout(f"Entropy Departure = {sdep:.6f}")
+    pout(f"Enthalpy Departure = {hdep:.6f} J/mol")
+    pout(f"Entropy Departure = {sdep:.6f} J/mol-K")
     pout("-" * 53)
 
     return

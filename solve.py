@@ -1,6 +1,6 @@
 import numpy as np
 import warnings
-from eos import cubic_eos
+from eos import cubic_eos, get_molar_volume
 from pr_utils import fugacity_coefficient
 from time import perf_counter_ns
 
@@ -194,6 +194,18 @@ def get_vapor_pressure(input_dict):
     input_dict["fc_v"] = fc_v
 
     return input_dict
+
+def pt_flash_nonaqueous(p, T, p_vap, input_dict):
+    alpha, beta, gamma, _, _ = cubic_eos(P=p, T=input_dict["T"], eos=input_dict['eos'],
+                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
+    x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
+    roots = [x for x in (x1, x2, x3) if np.isreal(x)]
+    if p < p_vap:
+        desired_root = max(roots)
+    else:
+        desired_root = min(roots)
+
+    return get_molar_volume(desired_root, input_dict["T"], p)
 
 
 if __name__ == '__main__':

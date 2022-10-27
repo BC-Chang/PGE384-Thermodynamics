@@ -1,6 +1,6 @@
 import numpy as np
 from eos import cubic_eos, get_molar_volume
-from solve import get_vapor_pressure, solve_cardanos
+from solve import get_vapor_pressure, solve_cardanos, pt_flash_nonaqueous
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout
 import os
@@ -34,24 +34,34 @@ mol_v_v = get_molar_volume(input_dict["zv"], input_dict["T"], input_dict["P"])
 print(f"Molar volume of liquid phase = {mol_v_l: 0.3e} m3/mol")
 print(f"Molar volume of vapor phase = {mol_v_v: 0.3e} m3/mol")
 
-# Create an array of pressure values
-pressures = np.linspace(100, 1E3, 50)
-mol_volumes = np.empty_like(pressures)
-for i, p in enumerate(pressures):
-    # Calculate molar volume at that pressure
-    # Calculate roots using Cardano's method
-    alpha, beta, gamma, _, _ = cubic_eos(P=p, T=input_dict["T"], eos=input_dict['eos'],
-                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
-    x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
-    print(x1, x2, x3)
+# Create an array of pressure values to test
+pressures = np.linspace(1.2, 1.5, 20) * 1.E6
+pressures_refined = np.linspace(input_dict["P"] - 1E4, input_dict["P"] + 1E4, 10)
+pressures = np.append(pressures, pressures_refined)
+pressures = np.sort(pressures)
 
-    mol_volumes[i] = get_molar_volume((x1, x2, x3), input_dict["T"], p)
+# Initialize molar volume array
+mol_volumes = np.zeros(len(pressures))
+
+for i, p in enumerate(pressures):
+
+    mol_volumes[i] = pt_flash_nonaqueous(p, input_dict["T"], input_dict["P"], input_dict)
 
 plt.figure(dpi=300)
-plt.plot(mol_volumes, pressures, 'ob', alpha=0.8)
+plt.plot(mol_volumes, pressures, '-ob', alpha=0.8, label="T = 313.15K")
 plt.xlabel('Molar Volume [m3/mol]')
 plt.ylabel('Pressure [Pa]')
 
+# Change Temperature to 70C
+input_dict["T"] = 70. + 273.15
+mol_volumes = np.zeros(len(pressures))
+for i, p in enumerate(pressures):
+    mol_volumes[i] = pt_flash_nonaqueous(p, input_dict["T"], input_dict["P"], input_dict)
+# # plt.figure(dpi=300)
+plt.plot(mol_volumes, pressures, '-or', alpha=0.8, label='T = 343.15K')
+# plt.xlabel('Molar Volume [m3/mol]')
+# plt.ylabel('Pressure [Pa]')
 # plt.ylim(0.0, 10.0)
+plt.legend()
 plt.show()
 

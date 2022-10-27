@@ -38,7 +38,7 @@ def cubic_eos(P, T,
     return alpha, beta, gamma, A, B #, a, b, alph, kapp
 
 
-def _get_compressibility_factor(P, V, T, R=8.314):
+def _get_compressibility_factor(P, V, T, R=8.3144598):
     """
     Get compression factor, Z, with P, V, and T in SI
     :param P: Pressure (Pa)
@@ -136,7 +136,7 @@ def _get_A_B(P, T, a, b, is_RK: bool = False):
     :param is_RK: True if EoS is Redlich-Kwong, False otherwise
     :return: A and B
     """
-    R = 8.314
+    R = 8.3144598
     B = b * P / (R * T)
     if is_RK:
         A = a * P / (R**2 * T**2.5)
@@ -154,7 +154,7 @@ def _van_der_waals_ab(Pc, Tc, *args, **kwargs):
     :param Tc:
     :return: a , b
     """
-    R = 8.314  # Universal Gas Constant
+    R = 8.3144598  # Universal Gas Constant
     a = 27 * R**2 * Tc**2 * 0.015625 / Pc
     b = R * Tc * 0.125 / Pc
     alpha = 0.
@@ -170,7 +170,7 @@ def _peng_robinson_ab(Pc, Tc, T, w):
     :param w: Acentric factor
     :return:
     """
-    R = 8.314
+    R = 8.3144598
     if w <= 0.491:
         kappa = 0.37464 + 1.54226 * w - 0.26992 * w**2
     else:
@@ -189,6 +189,16 @@ def wilson_correlation(input_dict):
     :return: Vapor pressure as calculated by Wilson's correlation
     """
     return input_dict["Pc"] * np.exp(5.373*(1 + input_dict["w"])*(1 - input_dict["Tc"]/input_dict["T"]))
+
+def get_molar_volume(z, T, P):
+    """
+    Calculate molar volume of a given phase
+    :param z: Compressibility Factor
+    :param input_dict: Dictionary of inputs containing pressure and temperature
+    :return: Molar Volume
+    """
+
+    return z * 8.3144598 * T / P
 
 
 if __name__ == "__main__":

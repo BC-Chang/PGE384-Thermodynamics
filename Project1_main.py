@@ -1,12 +1,10 @@
 import numpy as np
-from eos import cubic_eos
-from solve import solve_cardanos, check_roots
+from eos import cubic_eos, get_molar_volume
+from solve import get_vapor_pressure, solve_cardanos
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout
-from pr_utils import fugacity_coefficient
 import os
 import pandas as pd
-from time import perf_counter_ns
 
 # Create a HW output directory if one does not already exist
 output_path = "HW5_Output"
@@ -24,47 +22,36 @@ if not os.path.exists(output_path):
 
 # Read in input file
 input_dict = read_input(filename="Input_Files/project1_input_file.yml")
+# input_dict["T"] = 70 + 273.15
 print(f"Initial pressure guess using Wilson's correlation = {input_dict['P']: 0.3f} Pa")
 
-# Set initial error to be very large
-err = 1.E9
-i = 0
+# Calculate vapor pressure at the given temperature
+input_dict = get_vapor_pressure(input_dict)
 
-tic = perf_counter_ns()
-# Calculating the vapor pressure
-while err > input_dict["eps"]:
-    # Find the coefficients of the specified cubic EoS at given pressure and temperature
-    alpha, beta, gamma, A, B = cubic_eos(P=input_dict["P"], T=input_dict["T"], eos=input_dict['eos'],
-                                   Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
+# Calculate molar volumes of each phases
+mol_v_l = get_molar_volume(input_dict["zl"], input_dict["T"], input_dict["P"])
+mol_v_v = get_molar_volume(input_dict["zv"], input_dict["T"], input_dict["P"])
+print(f"Molar volume of liquid phase = {mol_v_l: 0.3e} m3/mol")
+print(f"Molar volume of vapor phase = {mol_v_v: 0.3e} m3/mol")
 
+# Create an array of pressure values
+pressures = np.linspace(100, 1E3, 50)
+mol_volumes = np.empty_like(pressures)
+for i, p in enumerate(pressures):
+    # Calculate molar volume at that pressure
     # Calculate roots using Cardano's method
+    alpha, beta, gamma, _, _ = cubic_eos(P=p, T=input_dict["T"], eos=input_dict['eos'],
+                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
     x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
+    print(x1, x2, x3)
 
+    mol_volumes[i] = get_molar_volume((x1, x2, x3), input_dict["T"], p)
 
-    # Get the roots corresponding to liquid and vapor phase, respectively.
-    zl, zv = check_roots(x1, x2, x3)
-    # print(zl, zv)
+plt.figure(dpi=300)
+plt.plot(mol_volumes, pressures, 'ob', alpha=0.8)
+plt.xlabel('Molar Volume [m3/mol]')
+plt.ylabel('Pressure [Pa]')
 
-    # Calculate the fugacity coefficients
-    # Liquid fugacity coefficient
-    fc_l = fugacity_coefficient(zl, A, B)
+# plt.ylim(0.0, 10.0)
+plt.show()
 
-    # Vapor phase fugacity coefficient
-    fc_v = fugacity_coefficient(zv, A, B)
-
-    # Calculate error using fugacity coefficients
-    err = abs(fc_l - fc_v)
-
-    # Update pressure if error is greater than convergence criterion
-    if err > input_dict["eps"]:
-        input_dict["P"] = input_dict["P"] * np.exp(fc_l) / np.exp(fc_v)
-
-    if i == input_dict["maxiter"]:
-        print("Maximum number of iterations reached")
-        break
-
-    i += 1
-
-toc = perf_counter_ns()
-print(f"Final vapor pressure = {input_dict['P'] :.3f} Pa")
-print(f"Elapsed Time = {(toc - tic)*1E-9 :.5f} s")

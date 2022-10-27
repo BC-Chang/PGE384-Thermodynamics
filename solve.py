@@ -1,5 +1,8 @@
 import numpy as np
 import warnings
+from eos import cubic_eos
+from pr_utils import fugacity_coefficient
+from time import perf_counter_ns
 
 def _get_delta(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> list:
     """
@@ -128,6 +131,69 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
     # x3 = - (S + T) * 0.5 - b/(3*a) - (-3)**(1/2) * 0.5 * (S - T)
 
     # return x1, x2, x3
+
+def get_vapor_pressure(input_dict):
+    """
+    Function to iteratively calculate the vapor pressure at a given temperature
+    :param input_dict: Dictionary of input values. Must contain P, T, eos, Pc, Tc, and w keys
+    :return: Input dictionary with updated vapor pressure value and compressibility factors of each root
+    """
+
+    # Set initial error to be very large
+    err = 1.E9
+    # Initialize counter
+    i = 0
+    # Start timer
+    tic = perf_counter_ns()
+
+    # Calculating the vapor pressure
+    while err > input_dict["eps"]:
+        # Find the coefficients of the specified cubic EoS at given pressure and temperature
+        alpha, beta, gamma, A, B = cubic_eos(P=input_dict["P"], T=input_dict["T"], eos=input_dict['eos'],
+                                       Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
+
+        # Calculate roots using Cardano's method
+        x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
+
+
+        # Get the roots corresponding to liquid and vapor phase, respectively.
+        zl, zv = check_roots(x1, x2, x3)
+        # print(zl, zv)
+
+        # Calculate the fugacity coefficients
+        # Liquid fugacity coefficient
+        fc_l = fugacity_coefficient(zl, A, B)
+
+        # Vapor phase fugacity coefficient
+        fc_v = fugacity_coefficient(zv, A, B)
+
+        # Calculate error using fugacity coefficients
+        err = abs(fc_l - fc_v)
+
+        # Update pressure if error is greater than convergence criterion
+        if err > input_dict["eps"]:
+            input_dict["P"] = input_dict["P"] * np.exp(fc_l) / np.exp(fc_v)
+
+        if i == input_dict["maxiter"]:
+            print("Maximum number of iterations reached")
+            break
+
+        i += 1
+
+    toc = perf_counter_ns()
+    print(f"Final vapor pressure = {input_dict['P'] :.3f} Pa")
+
+    print(f"Elapsed Time = {(toc - tic) * 1E-9 :.5f} s")
+
+    # Assign compressibility factors to input dictionary
+    input_dict["zl"] = zl
+    input_dict["zv"] = zv
+
+    # Assign fugacity coefficients to input_dict
+    input_dict["fc_l"] = fc_l
+    input_dict["fc_v"] = fc_v
+
+    return input_dict
 
 
 if __name__ == '__main__':

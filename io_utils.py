@@ -1,6 +1,7 @@
 import yaml
 import sys
 import datetime
+from eos import wilson_correlation
 
 # Read in yaml file
 def read_input(filename: str='input_file.yml',) -> dict:
@@ -10,8 +11,14 @@ def read_input(filename: str='input_file.yml',) -> dict:
     :return: Dictionary with input parameters
     """
     with open(filename, 'r') as f:
-        return yaml.load(f, Loader=yaml.FullLoader)
-    
+        input_dict = yaml.load(f, Loader=yaml.FullLoader)
+
+    if input_dict["P"] == "None":
+        input_dict["P"] = wilson_correlation(input_dict)
+
+    return input_dict
+
+
 
 
 # Write to output file

@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 def _get_delta(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> list:
     """
@@ -64,7 +65,35 @@ def _delta_negative(b, D, E, *args, **kwargs):
     x3 = 2*(-E)**(0.5)*np.cos(theta / 3 + 4/3*np.pi) - b/3
     
     return x1, x2, x3
-    
+
+def check_roots(*args):
+    """
+    Check the roots to sort whether they correspond to vapor or liquid phase
+    :param x1: root 1
+    :param x2: root 2
+    :param x3: root 3
+    :return: Root corresponding to liquid phase, root corresponding to vapor phase
+    """
+    # Figure out which roots are real numbers and ignore complex roots
+    real_roots = [x for x in args if isinstance(x, float)]
+
+    # Make sure there is at least one real root:
+    assert len(real_roots) >= 1, "No real roots, check inputs."
+
+    # Root corresponding to liquid phase = minimum of real roots
+    xl = np.amin(real_roots)
+
+    # Root corresponding to vapor phase = maximum of real roots
+    xv = np.amax(real_roots)
+
+    if len(real_roots) < 2:
+        warnings.warn("Warning.... Only 1 real root.")
+
+    return xl, xv
+
+
+
+
 def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> tuple:
     """
     Find cubic roots from polynomial of form a*x^3 + b*x^2 + c*x + d using Cardano's equation

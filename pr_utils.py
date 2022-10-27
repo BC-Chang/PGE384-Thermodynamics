@@ -45,3 +45,24 @@ def entropy_departure(Z, dadT, b, B):
 
     return s_dep
 
+def fugacity_coefficient(Z, A, B):
+    """
+    Calculate fugacity coefficient using equations 7.4-14(a,b) from Sandler 5th edition
+    :param Z: Compressibility given by root (either liquid or vapor compressibility)
+    :param A: Dimensionless attraction
+    :param B: Dimensionless covolume
+    :return: Fugacity coefficient
+    """
+    # First term of eq 7.4-14
+    fc1 = Z - 1
+
+    # Second term of eq. 7.4-14
+    fc2 = np.log(Z - B)
+
+    # Third term of eq. 7.4-14
+    fc3 = A / (2*np.sqrt(2)*B) * (np.log(Z + (1 + np.sqrt(2))*B) - np.log(Z + (1 - np.sqrt(2))*B))
+
+    # Put them all together
+    fc = fc1 - fc2 - fc3
+
+    return fc

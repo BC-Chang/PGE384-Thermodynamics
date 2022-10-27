@@ -33,9 +33,9 @@ def cubic_eos(P, T,
 
     a, b, alph, kapp = ab_dict[eos](Pc, Tc, T, w)
 
-    alpha, beta, gamma = eos_dict[eos](P, T, a, b)
+    alpha, beta, gamma, A, B = eos_dict[eos](P, T, a, b)
 
-    return alpha, beta, gamma, a, b, alph, kapp
+    return alpha, beta, gamma, A, B #, a, b, alph, kapp
 
 
 def _get_compressibility_factor(P, V, T, R=8.314):
@@ -85,7 +85,7 @@ def _peng_robinson_cubic(P, T, a, b):
     beta = A - 3* B**2 - 2 * B
     gamma = -1 * A * B + B**2 + B**3
 
-    return alpha, beta, gamma
+    return alpha, beta, gamma, A, B
 
 
 def _redlich_kwong_cubic(P, T, a, b):
@@ -104,7 +104,7 @@ def _redlich_kwong_cubic(P, T, a, b):
     beta = A - B - B**2
     gamma = -1 * A * B
 
-    return alpha, beta, gamma
+    return alpha, beta, gamma, A, B
 
 
 def _soave_cubic(P, T, a, b):
@@ -123,7 +123,7 @@ def _soave_cubic(P, T, a, b):
     beta = A - B - B ** 2
     gamma = -1 * A * B
 
-    return alpha, beta, gamma
+    return alpha, beta, gamma, A, B
 
 
 def _get_A_B(P, T, a, b, is_RK: bool = False):
@@ -181,6 +181,14 @@ def _peng_robinson_ab(Pc, Tc, T, w):
     b = 0.07780 * R * Tc / Pc
 
     return a, b, alpha**2, kappa
+
+
+def wilson_correlation(input_dict):
+    """
+    :param input_dict: Dictionary with input values from YML file
+    :return: Vapor pressure as calculated by Wilson's correlation
+    """
+    return input_dict["Pc"] * np.exp(5.373*(1 + input_dict["w"])*(1 - input_dict["Tc"]/input_dict["T"]))
 
 
 if __name__ == "__main__":

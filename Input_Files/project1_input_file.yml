@@ -1,0 +1,9 @@
+---
+P: None  # Pressure (Pa)
+T: 313.15  # Temperature (K)
+Pc: 4250000.0  # Critical Pressure (Pa)
+Tc: 370.0  # Critical Temperature (K)
+w: 0.152  # Acentric factor
+eos: "PR"  # Equation of state — currently only vdw is fully implemented
+eps: 1.0E-6  # Convergence criterion for vapor pressure calculation
+maxiter: 1000  # Maximum number of iterations for vapor pressure calculation.

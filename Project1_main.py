@@ -94,16 +94,54 @@ if __name__ == '__main__':
 
     # Read in input file
     input_dict = read_input(filename="Input_Files/project1_input_file_2.yml")
+    # input_dict['T'] = 283.15
 
     # Calculate vapor pressure at the given temperature
     input_dict, _ = get_vapor_pressure(input_dict)
+    mol_v_l = get_molar_volume(input_dict["zl"], input_dict["T"], input_dict["P"])
+    mol_v_v = get_molar_volume(input_dict["zv"], input_dict["T"], input_dict["P"])
+    print(mol_v_l, mol_v_v)
+    # Attempt 1
+    mol_v = np.linspace(mol_v_l, mol_v_v, 1000)
+    eos_params = cubic_eos(100, input_dict["T"], input_dict["Pc"], input_dict["Tc"], input_dict["w"])
+    # Peng Robinson EoS
+    P = 8.3144598*input_dict["T"]/ (mol_v - eos_params["b"]) - eos_params["a"] / (mol_v*(mol_v + eos_params["b"]) + eos_params["b"]*(mol_v - eos_params["b"]))
+    # P = abs(P)
+    # plt.plot(mol_v, P)
+    Z = P * mol_v / (8.3144598*input_dict["T"])
 
+    # Z = _get_compressibility_factor(P, mol_v, input_dict["T"],)
+    # Fugacity coeff
+    a = eos_params["a"]
+    b = eos_params["b"]
+    R = 8.3144598
+    T = input_dict["T"]
+    # First term of eq 7.4-14
+    fc1 = (Z - 1)
+    B = b * P / (R * T)
+    # Second term of eq. 7.4-14
+    fc2 = np.log(Z - b*P/(R*T))
+
+    # Third term of eq. 7.4-14
+    fc3 = a / (2 * np.sqrt(2) * b * R * T) * (np.log(Z + (1 + np.sqrt(2)) * b*P/(R*T)) - np.log(Z + (1 - np.sqrt(2)) * b*P/(R*T)))
+
+    fc = fc1 - fc2 - fc3
+
+    # Put them all together
+    phi = (np.exp(Z - 1) / (Z - b*P/(R*T))) / (np.exp(a / (2 * np.sqrt(2) * b * R * T))**np.log((Z + (1 + np.sqrt(2)) * b*P/(R*T)) / (Z + (1 - np.sqrt(2)) * b*P/(R*T))))
+    G_term = np.log(phi * P / input_dict["pref"])
+
+    del_G = fc + np.log(P) - np.log(input_dict["pref"])
+
+    plt.scatter(mol_v, G_term)
+    plt.plot(mol_v, del_G, 'r')
+    plt.show()
     # Calculate PV Isotherm
-    pressures = np.linspace(2.5, 4, 1000) * 1.E6
+    # pressures = np.linspace(2.5, 4, 1000) * 1.E6
     # pressures_refined = np.linspace(input_dict["P"] - 1E4, input_dict["P"] + 1E4, 10)
     # pressures = np.append(pressures, pressures_refined)
     # pressures = np.sort(pressures)
-
+    '''
     # Initialize molar volume array
     mol_volumes = np.zeros(len(pressures))
     Del_molar_G = np.zeros(len(pressures))
@@ -122,7 +160,7 @@ if __name__ == '__main__':
         # Calculate fugacity coefficients
         # Calculate the fugacity coefficients
         Del_molar_G[i] = fugacity_coefficient(min(roots), eos_params["A"], eos_params["B"]) + np.log(p) - np.log(input_dict["pref"])
-
+        
 
     # plt.figure(dpi=300)
     # plt.plot(mol_volumes, pressures, '-ob', alpha=0.8, label=f"T = {input_dict['T']}")
@@ -130,12 +168,13 @@ if __name__ == '__main__':
     # plt.ylabel('Pressure [Pa]')
     # plt.legend()
 
-    plt.figure(dpi=300)
+    plt.figure(dpi=50)
     plt.plot(mol_volumes, Del_molar_G, 'or', alpha=0.8)
     plt.xlabel('Molar Volume [m3/mol]')
     plt.ylabel('$\Delta G_{molar} / RT$')
     # plt.legend()
     plt.show()
+    '''
 
 
 

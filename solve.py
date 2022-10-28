@@ -69,7 +69,7 @@ def _delta_negative(b, D, E, *args, **kwargs):
     
     return x1, x2, x3
 
-def check_roots(*args):
+def _get_real_roots(*args):
     """
     Check the roots to sort whether they correspond to vapor or liquid phase
     :param x1: root 1
@@ -148,24 +148,16 @@ def get_vapor_pressure(input_dict):
 
     # Calculating the vapor pressure
     while err > input_dict["eps"]:
-        # Find the coefficients of the specified cubic EoS at given pressure and temperature
-        alpha, beta, gamma, A, B = cubic_eos(P=input_dict["P"], T=input_dict["T"], eos=input_dict['eos'],
-                                       Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
-
-        # Calculate roots using Cardano's method
-        x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
-
-
-        # Get the roots corresponding to liquid and vapor phase, respectively.
-        zl, zv = check_roots(x1, x2, x3)
-        # print(zl, zv)
+        # Solve Cardano's method and process to get compressibility factors of liquid and vapor pressure.
+        roots, eos_params = get_roots(input_dict["P"], input_dict["T"], input_dict)
+        zl, zv = roots
 
         # Calculate the fugacity coefficients
         # Liquid fugacity coefficient
-        fc_l = fugacity_coefficient(zl, A, B)
+        fc_l = fugacity_coefficient(zl, eos_params["A"], eos_params["B"])
 
         # Vapor phase fugacity coefficient
-        fc_v = fugacity_coefficient(zv, A, B)
+        fc_v = fugacity_coefficient(zv, eos_params["A"], eos_params["B"])
 
         # Calculate error using fugacity coefficients
         err = abs(fc_l - fc_v)
@@ -193,19 +185,26 @@ def get_vapor_pressure(input_dict):
     input_dict["fc_l"] = fc_l
     input_dict["fc_v"] = fc_v
 
-    return input_dict
+    return input_dict, eos_params
+
+def get_roots(p, T, input_dict):
+    eos_params = cubic_eos(P=p, T=T, eos=input_dict['eos'],
+                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
+    x1, x2, x3 = solve_cardanos(1, eos_params["alpha"], eos_params["beta"], eos_params["gamma"])
+    roots = _get_real_roots(x1, x2, x3)
+
+    return roots, eos_params
+
 
 def pt_flash_nonaqueous(p, T, p_vap, input_dict):
-    alpha, beta, gamma, _, _ = cubic_eos(P=p, T=input_dict["T"], eos=input_dict['eos'],
-                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
-    x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
-    roots = [x for x in (x1, x2, x3) if np.isreal(x)]
+    roots, eos_params = get_roots(p, T, input_dict)
     if p < p_vap:
         desired_root = max(roots)
     else:
         desired_root = min(roots)
 
-    return get_molar_volume(desired_root, input_dict["T"], p)
+    return get_molar_volume(desired_root, T, p), eos_params, desired_root
+
 
 
 if __name__ == '__main__':

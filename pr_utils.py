@@ -45,6 +45,7 @@ def entropy_departure(Z, dadT, b, B):
 
     return s_dep
 
+
 def fugacity_coefficient(Z, A, B):
     """
     Calculate fugacity coefficient using equations 7.4-14(a,b) from Sandler 5th edition

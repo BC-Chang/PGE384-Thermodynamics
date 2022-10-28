@@ -20,9 +20,11 @@ def cubic_eos(P, T,
     :param Pc: Pressure at critical point (Pa). Default = 4.6 MPa (Methane)
     :param Tc: Temperature at critical point (K). Default = 190.6 K (Methane)
     :param w: Acentric factor. Default = 0.008 (Methane)
-    :param eos: Desired equation of state. Default = Peng-Robinson
-    :return: Coefficients for specified equation of state, a and b.
+    :param eos: Desired equation of state. Default = PR (Peng-Robinson)
+    :return: A dictionary of eos parameters, including cubic equation coefficients, dimensional and dimensionless attraction and covolume,
+    and alpha and kappa parameters for PR
     """
+
     eos_dict = {'vdw': _van_der_waals_cubic,
                 'PR': _peng_robinson_cubic,
                 'RK': _redlich_kwong_cubic,
@@ -35,7 +37,11 @@ def cubic_eos(P, T,
 
     alpha, beta, gamma, A, B = eos_dict[eos](P, T, a, b)
 
-    return alpha, beta, gamma, A, B #, a, b, alph, kapp
+    eos_params = {'alpha': alpha, 'beta': beta, 'gamma': gamma,
+                'a': a, 'b': b, 'A': A, 'B': B,
+                'alph': alph, 'kapp': kapp}
+
+    return eos_params
 
 
 def _get_compressibility_factor(P, V, T, R=8.3144598):

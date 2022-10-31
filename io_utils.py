@@ -33,3 +33,21 @@ def pout(msg: str, filename: str='HW5_Output/outfile.txt') -> None:
         f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\t\t' + msg + '\n')
     
     return
+
+# Redirect stdout to the output file
+def redirect_stdout(filename: str) -> None:
+    """
+    Redirect stdout to the output file
+    :param filename: A string with path to output file
+    :return: None
+    """
+    sys.stdout = open(filename, 'a')
+
+def close_output(filename: str) -> None:
+    """
+    Close the output file
+    :param filename: A string with path to output file
+    :return: None
+    """
+    sys.stdout.close()
+    sys.stdout = sys.__stdout__

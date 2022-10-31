@@ -1,0 +1,11 @@
+**************************************************
+Working Fluid: Propane, T = 313.15K
+Initial pressure guess using Wilson's correlation:
+	 1381578.611 Pa
+Vapor Pressure of Propane at 313.15K:
+	 1368639.401 Pa
+Molar volume of liquid phase
+	 9.219e-05 m3/mol
+Molar volume of vapor phase
+	 1.457e-03 m3/mol
+**************************************************

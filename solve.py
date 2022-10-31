@@ -173,9 +173,6 @@ def get_vapor_pressure(input_dict):
         i += 1
 
     toc = perf_counter_ns()
-    print(f"Final vapor pressure = {input_dict['P'] :.3f} Pa")
-
-    print(f"Elapsed Time = {(toc - tic) * 1E-9 :.5f} s")
 
     # Assign compressibility factors to input dictionary
     input_dict["zl"] = zl

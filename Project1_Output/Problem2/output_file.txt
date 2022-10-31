@@ -1,0 +1,25 @@
+**************************************************
+Working Fluid: CO2, T = 272.039K
+Vapor pressure: 
+	3366879.4085419676 Pa
+Equilibrium molar volume of liquid phase:
+	4.780477202672007e-05 m3/mol
+Equilibrium molar volume of vapor phase:
+	0.0004680977501962783 m3/mol
+Delta G/RT at molar volume of liquid at equilibrium: 
+	3.2530054426490276
+Delta G/RT at molar volume of vapor at equilibrium: 
+	3.2503421402973482
+Molar Gibbs free energy of liquid and vapor phases are approximately equal at equilibrium.
+Z_l = 
+	0.0711596175697321
+Z_v = 
+	0.6967851843452157
+Equilibrium molar volume: 
+	0.000717476327687082 m3/mol
+Molar Gibbs Free Energy of Liquid Phase: 
+	3.258758963405709
+Molar Gibbs Free Energy of Vapor Phase:  
+	3.0321166880228017
+CO2 is a vapor phase at 2500000.0 Pa and 272.039K
+Compressibility factor of vapor phase results in lower Gibbs Free Energy

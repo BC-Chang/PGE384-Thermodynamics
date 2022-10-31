@@ -20,7 +20,7 @@ def main_1():
 
     # Read in input file
     input_dict = read_input(filename="Input_Files/project1_input_file_1.yml")
-    # input_dict["T"] = 343.15
+
     print("*"*50)
     print(f"Working Fluid: Propane, T = {input_dict['T']}K")
     print(f"Initial pressure guess using Wilson's correlation:")
@@ -218,7 +218,6 @@ def main_2():
     plt.savefig(f'{output_path}/stable_regions_{input_dict["T"]}K.png')
 
 
-
     """
     =======================================================================
     Problem 2c: Determine \Delta G/RT at equilibrium molar volumes.
@@ -231,6 +230,7 @@ def main_2():
     print(f"\t{del_G[stable_id_v[0]]}")
 
     print("Molar Gibbs free energy of liquid and vapor phases are approximately equal at equilibrium.")
+
 
     """
     =======================================================================
@@ -279,9 +279,3 @@ if __name__ == '__main__':
 
     # Uncomment the following line to run problem 2
     main_2()
-
-
-
-
-
-

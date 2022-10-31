@@ -15,6 +15,8 @@ The work for problem 1a and 2a are shown in the attached PDF file.
 Input Files: 
 I use YAML format for input files. PyYAML is a dependency for the code to run. I use separate input files for problems 1 and 2, they can be found in the Input_Files/ directory. Setting ```P = None``` will automatically initialize pressure to the vapor pressure given by Wilson's correlation. You should be able to simply change the P and T in the input file and rerun Project1_main.py. I also specify the desired critical temperature, critical pressure, and acentric factor for the working fluid.
 
+```Project1_main.py``` is split into 2 functions that can run independently. ```main_1()``` corresponds to Problem 1 and ```main_2()``` corresponds to Problem 2. One can independently run each problem by commenting/uncommenting the function calls within the script.
+
 The code automatically creates an output directory if one does not already exist. For this assignment, it will be called Project1_Output/. There will be 2 subdirectories, Problem 1/ and Problem 2/. 
 
 Within the Project1_Output/Problem 1/ directory will be 5 files:

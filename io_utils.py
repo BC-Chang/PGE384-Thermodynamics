@@ -2,6 +2,7 @@ import yaml
 import sys
 import datetime
 from eos import wilson_correlation
+import numpy as np
 
 # Read in yaml file
 def read_input(filename: str='input_file.yml',) -> dict:
@@ -13,8 +14,20 @@ def read_input(filename: str='input_file.yml',) -> dict:
     with open(filename, 'r') as f:
         input_dict = yaml.load(f, Loader=yaml.FullLoader)
 
-    if input_dict["P"] == "None":
-        input_dict["P"] = wilson_correlation(input_dict)
+    # Number of components and check that critical values are present for all components
+    input_dict["Nc"] = len(input_dict["Pc"])
+    assert len(input_dict["Tc"]) == input_dict["Nc"]
+    assert len(input_dict["w"]) == input_dict["Nc"]
+
+    for i, component_pvap in enumerate(input_dict["Pvap"]):
+        if component_pvap == "None":
+            input_dict["Pvap"][i] = wilson_correlation(input_dict, i)
+
+
+    # Convert list to arrays
+    for key in ["Pc", "Tc", "w", "Pvap"]:
+        if not isinstance(input_dict[key], np.ndarray):
+            input_dict[key] = np.array(input_dict[key])
 
     return input_dict
 

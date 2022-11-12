@@ -1,6 +1,6 @@
 ---
 P: None  # Pressure (Pa)
-T: 313.15  # Temperature (K)
+T: 313  # Temperature (K)
 Pc: 4250000.0  # Critical Pressure (Pa)
 Tc: 370.0  # Critical Temperature (K)
 w: 0.152  # Acentric factor

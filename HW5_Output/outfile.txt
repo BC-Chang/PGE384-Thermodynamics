@@ -50,3 +50,4 @@
 2022-10-17 23:04:31		Enthalpy Departure = -5924.266850 J/mol
 2022-10-17 23:04:31		Entropy Departure = -10.837951 J/mol-K
 2022-10-17 23:04:31		-----------------------------------------------------
+2022-10-30 08:18:18		Initial pressure guess using Wilson's correlation =  1381578.611 Pa

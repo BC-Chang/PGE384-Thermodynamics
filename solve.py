@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 from eos import cubic_eos, get_molar_volume
-from pr_utils import fugacity_coefficient
+
 from time import perf_counter_ns
 
 def _get_delta(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -> list:
@@ -119,89 +119,6 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
         return _delta_negative(b, D, E)
     else:
         raise Exception("Delta is not a real number :(")
-        
-    # R = (9*a*b*c - 27*a**2*d - 2*b**3) / (54 * a**3)
-    # Q = (3*a*c - b**2) / (9*a**2)
-    # T = (R - (Q**3 + R**2) ** (1/2)) ** (1/3)
-    # S =  (R + (Q**3 + R**2)**(1/2)) ** (1/3)
-
-    # # Calculate 3 roots
-    # x1 = S + T - b / (3*a)
-    # x2 = - (S + T) * 0.5 - b/(3*a) + (-3)**(1/2) * 0.5 * (S - T)
-    # x3 = - (S + T) * 0.5 - b/(3*a) - (-3)**(1/2) * 0.5 * (S - T)
-
-    # return x1, x2, x3
-
-def get_vapor_pressure(input_dict):
-    """
-    Function to iteratively calculate the vapor pressure at a given temperature
-    :param input_dict: Dictionary of input values. Must contain P, T, eos, Pc, Tc, and w keys
-    :return: Input dictionary with updated vapor pressure value and compressibility factors of each root
-    """
-
-    # Set initial error to be very large
-    err = 1.E9
-    # Initialize counter
-    i = 0
-    # Start timer
-    tic = perf_counter_ns()
-
-    # Calculating the vapor pressure
-    while err > input_dict["eps"]:
-        # Solve Cardano's method and process to get compressibility factors of liquid and vapor pressure.
-        roots, eos_params = get_roots(input_dict["P"], input_dict["T"], input_dict)
-        zl, zv = roots
-
-        # Calculate the fugacity coefficients
-        # Liquid fugacity coefficient
-        fc_l = fugacity_coefficient(zl, eos_params["A"], eos_params["B"])
-
-        # Vapor phase fugacity coefficient
-        fc_v = fugacity_coefficient(zv, eos_params["A"], eos_params["B"])
-
-        # Calculate error using fugacity coefficients
-        err = abs(fc_l - fc_v)
-
-        # Update pressure if error is greater than convergence criterion
-        if err > input_dict["eps"]:
-            input_dict["P"] = input_dict["P"] * np.exp(fc_l) / np.exp(fc_v)
-
-        if i == input_dict["maxiter"]:
-            print("Maximum number of iterations reached")
-            break
-
-        i += 1
-
-    toc = perf_counter_ns()
-
-    # Assign compressibility factors to input dictionary
-    input_dict["zl"] = zl
-    input_dict["zv"] = zv
-
-    # Assign fugacity coefficients to input_dict
-    input_dict["fc_l"] = fc_l
-    input_dict["fc_v"] = fc_v
-
-    return input_dict, eos_params
-
-def get_roots(p, T, input_dict):
-    eos_params = cubic_eos(P=p, T=T, eos=input_dict['eos'],
-                                        Pc=input_dict["Pc"], Tc=input_dict["Tc"], w=input_dict["w"])
-    x1, x2, x3 = solve_cardanos(1, eos_params["alpha"], eos_params["beta"], eos_params["gamma"])
-    roots = _get_real_roots(x1, x2, x3)
-
-    return roots, eos_params
-
-
-def pt_flash_nonaqueous(p, T, p_vap, input_dict):
-    roots, eos_params = get_roots(p, T, input_dict)
-    if p < p_vap:
-        desired_root = max(roots)
-    else:
-        desired_root = min(roots)
-
-    return get_molar_volume(desired_root, T, p), eos_params, desired_root
-
 
 
 if __name__ == '__main__':

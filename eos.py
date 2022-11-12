@@ -189,12 +189,13 @@ def _peng_robinson_ab(Pc, Tc, T, w):
     return a, b, alpha**2, kappa
 
 
-def wilson_correlation(input_dict):
+def wilson_correlation(input_dict, i):
     """
     :param input_dict: Dictionary with input values from YML file
+    :param i: Index of component
     :return: Vapor pressure as calculated by Wilson's correlation
     """
-    return input_dict["Pc"] * np.exp(5.373*(1 + input_dict["w"])*(1 - input_dict["Tc"]/input_dict["T"]))
+    return input_dict["Pc"][i] * np.exp(5.373*(1 + input_dict["w"][i])*(1 - input_dict["Tc"][i]/input_dict["T"]))
 
 def get_molar_volume(z, T, P):
     """

@@ -1,64 +1,29 @@
 **************************************************
-Initial pressure guess using Wilson's correlation:
-[2679977.7434448   290993.9217887    44069.41854696]
-K values using Wilson's correlation
-[1.55479164 0.1688204  0.02556692]
-Vapor Pressure of components [1, 2, 3] at T = 344.261K:
-[2657154.93506289  291147.68077811   42183.59588014]
-K values using Raoult's Law
-[1.54155097 0.1689096  0.02447285]
-Beta_V:  0.11656582151969302
-Dew point:  406450.808 Pa
-Bubble point: 1816604.192 Pa
-**************************************************
-Initial pressure guess using Wilson's correlation:
-[2679977.7434448   290993.9217887    44069.41854696]
-K values using Wilson's correlation
-[1.55479164 0.1688204  0.02556692]
-Vapor Pressure of components [1, 2, 3] at T = 344.261K:
-[2657154.93506289  291147.68077811   42183.59588014]
-K values using Raoult's Law
-[1.54155097 0.1689096  0.02447285]
-Beta_V:  0.11656582151969302
-Dew point:  406450.808 Pa
-Bubble point: 1816604.192 Pa
-**************************************************
-Initial pressure guess using Wilson's correlation:
-[2679977.7434448   290993.9217887    44069.41854696]
-K values using Wilson's correlation
-[1.55479164 0.1688204  0.02556692]
-Vapor Pressure of components [1, 2, 3] at T = 344.261K:
-[2657154.93506289  291147.68077811   42183.59588014]
-K values using Raoult's Law
-[1.54155097 0.1689096  0.02447285]
-Beta_V:  0.11656582151969302
-Dew point:  406450.808 Pa
-Bubble point: 1816604.192 Pa
-**************************************************
-Initial pressure guess using Wilson's correlation:
-[2679977.7434448   290993.9217887    44069.41854696]
-K values using Wilson's correlation
-[1.55479164 0.1688204  0.02556692]
-Vapor Pressure of components [1, 2, 3] at T = 344.261K:
-[2657154.93506289  291147.68077811   42183.59588014]
-K values using Raoult's Law
-[1.54155097 0.1689096  0.02447285]
-Beta_V:  0.11656582151969302
-Lower bound of Beta_V: -1.847
-Upper bound of Beta_V:  1.025
-Dew point:  406450.808 Pa
-Bubble point: 1816604.192 Pa
-**************************************************
-Initial pressure guess using Wilson's correlation:
-[2679977.7434448   290993.9217887    44069.41854696]
-K values using Wilson's correlation
-[1.55479164 0.1688204  0.02556692]
-Vapor Pressure of components [1, 2, 3] at T = 344.261K:
-[2657154.93506289  291147.68077811   42183.59588014]
-K values using Raoult's Law
-[1.54155097 0.1689096  0.02447285]
-Beta_V:  0.11656582151969302
-Lower bound of Beta_V: -1.847
-Upper bound of Beta_V:  1.025
-Dew point:  406450.808 Pa
-Bubble point: 1816604.192 Pa
+Homework 8 Problem 2: 
+
+Problem 2b:
+	Initial vapor pressure guesses using Wilson's correlation:
+		[388.69780796  42.20508913   6.39172711] psi
+	K values using Wilson's correlation (Problem 2b)
+		 [1.55479164 0.1688204  0.02556692]
+
+Problem 2a:
+	Vapor Pressure of components [1, 2, 3] at T = 160.00F
+		[385.38764033  42.22738998   6.11821172] psi
+	K values using Raoult's Law
+		 [1.54155097 0.1689096  0.02447285]
+
+Problem 2c:
+	Phase compositions:
+		Liquid Phase Compositions (x_i) of components [1, 2, 3]: 
+			[0.61140429 0.33218057 0.05641514]
+		Vapor Phase Compositions (y_i) of components [1, 2, 3]: 
+			[0.94251087 0.05610849 0.00138064]
+	Poles of RR:
+		Mole fraction of vapor phase (beta_v):  0.11656582151969302
+		Lower bound of Beta_V (Pole 1): -1.8465482736435583
+		Upper bound of Beta_V (Pole 2): 1.0250867988583388
+
+Problem 2d:
+	Dew point:  58.95069042792536 psi
+	Bubble point: 263.4760937916877 psi

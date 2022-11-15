@@ -116,10 +116,6 @@ def fugacity_coefficient_multicomponent(Z, a_mix, b_mix, P, T, a_ij, b_i, y_i, R
     term_2 = b_i / b_mix * (Z - 1)
     term_3a = a_mix / (2 * np.sqrt(2) * R * T * b_mix)
     my_sum = np.sum(y_i * a_ij, axis=1)
-    print(my_sum)
-    # my_sum = 0
-    # for i in range(len(y_i)):
-    #     my_sum += y_i[i] * a_ij[i]
 
     term_3b = (2 * my_sum / a_mix) - (b_i / b_mix)
     term_3c = np.log(Z + (1 + np.sqrt(2)) * b_mix * P / (R * T)) - np.log(Z + (1 - np.sqrt(2)) * b_mix * P / (R * T))

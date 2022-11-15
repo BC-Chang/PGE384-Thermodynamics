@@ -1,4 +1,0 @@
-**************************************************
-Initial pressure guess using Wilson's correlation:
-**************************************************
-Initial pressure guess using Wilson's correlation:

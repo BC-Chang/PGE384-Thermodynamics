@@ -13,7 +13,7 @@ To run the code:
 The work for problem 1 is shown in the attached PDF file. 
 
 Input Files: 
-I use YAML format for input files. PyYAML is a dependency for the code to run. I use separate input files for problems 1 and 2, they can be found in the Input_Files/ directory. Setting ```Pvap = None``` will automatically initialize vapor pressure to the vapor pressure given by Wilson's correlation. You should be able to simply change the P and T in the input file and rerun HW8_main.py. I also specify the desired critical temperature, critical pressure, and acentric factor for each fluid as a list (state variables grouped together).
+I use YAML format for input files. PyYAML is a dependency for the code to run. I use separate input files for problems 2 and 3, they can be found in the Input_Files/ directory. Setting ```Pvap = None``` will automatically initialize vapor pressure to the vapor pressure given by Wilson's correlation. You should be able to simply change the P and T in the input file and rerun HW8_main.py. I also specify the desired critical temperature, critical pressure, and acentric factor for each fluid as a list (state variables grouped together). To change the components, simply change the Tc, Pc, and w in the appropriate fields. The order of the list matters! Each element of the list corresponds to a particular component.
 
 ```HW8_main.py``` is split into 2 functions that can run independently. ```p2_main()``` corresponds to Problem 2 and ```p3_main()``` corresponds to Problem 3. One can independently run each problem by commenting/uncommenting the function calls within the script.
 

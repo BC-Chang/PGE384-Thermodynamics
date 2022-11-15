@@ -1,0 +1,42 @@
+---
+P: 10342135.94  # System Pressure (Pa)
+T: 310.93 # Temperature (K)
+Pc:  # Critical pressure of each component (Pa)
+     - 7376000.0 # Pc of CO2 (Pa)
+     - 3796000.0 # Pc of C4 (Pa)
+     - 2740000.0 # Pc of C7 (Pa)
+     - 2110000.0 # Pc of C10 (Pa)
+
+Tc:  # Critical temperature of each component (K)
+     - 304.20  # Tc of CO2 (K)
+     - 425.12  # Tc of C4 (K)
+     - 540.20  # Tc of C7 (K) 
+     - 617.70  # Tc of C10 (K)
+
+w:   # Acentric factor of each component
+     - 0.225   # Acentric factor of CO2
+     - 0.2014  # Acentric factor of C4
+     - 0.3505  # Acentric factor of C7
+     - 0.4898  # Acentric factor of C10
+
+Pvap: # Vapor Pressure of each component (assuming pure fluid)
+     - None
+     - None
+     - None
+     - None
+
+zi:  # Mole fraction of each component
+     - 0.90
+     - 0.05
+     - 0.03
+     - 0.02
+
+Kij:  # Non-Zero Binary interactions
+      Component 0:
+          - 0.1200
+          - 0.1000
+          - 0.1141
+
+eos: "PR"  # Equation of state — currently only vdw & PR is fully implemented
+eps: 1.0E-6  # Convergence criterion for vapor pressure calculation
+maxiter: 1000  # Maximum number of iterations for vapor pressure calculation.

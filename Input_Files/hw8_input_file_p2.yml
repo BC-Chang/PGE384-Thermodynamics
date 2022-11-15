@@ -3,8 +3,8 @@ P: 1723689.32  # System Pressure (Pa)
 T: 344.261 # Temperature (K)
 Pc:  # Critical pressure of each component (Pa)
      - 4248000.0  # Critical Pressure of component 1 (Pa)
-     - 33700000.0 # Critical Pressure of component 2 (Pa)
-     - 27400000.0 # Critical Pressure of component 3 (Pa)
+     - 3370000.0 # Critical Pressure of component 2 (Pa)
+     - 2740000.0 # Critical Pressure of component 3 (Pa)
 
 Tc:  # Critical temperature of each component (K)
      - 369.83  # Critical Temperature of component 1 (K)
@@ -21,7 +21,7 @@ Pvap: # Vapor Pressure of each component (assuming pure fluid)
      - None
      - None
 
-xi:  # Mole fraction of each component
+zi:  # Mole fraction of each component
      - 0.65
      - 0.30
      - 0.05

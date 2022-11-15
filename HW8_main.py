@@ -20,7 +20,7 @@ def p2_main():
         os.makedirs(output_path)
 
     # Redirect output to the output directory
-    # redirect_stdout(f"{output_path}/output_file.txt")
+    redirect_stdout(f"{output_path}/output_file.txt")
 
     # Read in input file
     input_dict = read_input(filename="Input_Files/hw8_input_file_p2.yml")
@@ -56,6 +56,8 @@ def p2_main():
     dew_pt = get_dew_point(input_dict["Pvap"], input_dict["zi"])
 
     print(f"Beta_V: ", RR_root)
+    print(f"Lower bound of Beta_V: {1 / (1 - max(K_raoults)) : .3f}")
+    print(f"Upper bound of Beta_V: {1 / (1 - min(K_raoults)) : .3f}")
     print(f"Dew point:  {dew_pt:.3f} Pa")
     print(f"Bubble point: {bubble_pt:.3f} Pa")
 
@@ -64,31 +66,25 @@ def p2_main():
     plt.plot(beta_vals[2:-1], f_vals[2:-1], '-b', alpha=0.8, label=r'$f(\beta_V)$')
     # plt.plot([beta_vals[1], beta_vals[-2]], [0,0], '--k')
     plt.plot(RR_root, 0, '*y', label=r'$\beta_V$')
-
+    plt.ylim([-40, 20])
     plt.xlabel(r'$\beta_V$')
     plt.ylabel(r'$f(\beta_V)$')
     plt.legend()
+    plt.savefig(os.path.join(output_path, 'RR.png'))
     plt.show()
+
+
 
     # f_tmp = f(K_raoults, input_dict["xi"], 0.5)
     # f_deriv_tmp = f_deriv(K_raoults, input_dict["xi"], 0.5)
 
     # Close the output file
-    # close_output(f"{output_path}/output_file.txt")
+    close_output(f"{output_path}/output_file.txt")
+    return
+
 
 # Code for problem 3
 def p3_main():
-    pass
-
-
-
-if __name__ == "__main__":
-    # Uncomment the following line to run problem 2
-    # p2_main()
-
-    # Uncomment the following line to run problem 3
-    # p3_main()
-
     R = 8.3144598
 
     # Create a HW output directory if one does not already exist
@@ -97,7 +93,7 @@ if __name__ == "__main__":
         os.makedirs(output_path)
 
     # Redirect output to the output directory
-    # redirect_stdout(f"{output_path}/output_file.txt")
+    redirect_stdout(f"{output_path}/output_file.txt")
 
     # Get a & b for each component assuming pure fluid
     input_dict = read_input(filename="Input_Files/hw8_input_file_p3.yml")
@@ -109,10 +105,9 @@ if __name__ == "__main__":
     K_matrix[0, 1:] = input_dict['Kij']['Component 0']
     K_matrix = K_matrix + K_matrix.T
 
-
     # Calculate vapor pressure at the given temperature assuming pure fluid
     pure_fluid_a_b = [_peng_robinson_ab(input_dict['Pc'][i], input_dict['Tc'][i],
-                                      input_dict['T'], input_dict['w'][i]) for i in range(input_dict["Nc"])]
+                                        input_dict['T'], input_dict['w'][i]) for i in range(input_dict["Nc"])]
     a_ii = np.array([pf_a_b[0] for pf_a_b in pure_fluid_a_b])
     b_ii = np.array([pf_a_b[1] for pf_a_b in pure_fluid_a_b])
 
@@ -139,13 +134,28 @@ if __name__ == "__main__":
 
     # Get fugacity coefficient
     fc, f = fugacity_coefficient_multicomponent(roots[0], a_mix, b_mix, input_dict['P'], input_dict['T'],
-                                             a_ij, b_ii, input_dict['zi'])
+                                                a_ij, b_ii, input_dict['zi'])
     print('Fugacity coefficient')
     print(fc)
 
     # Fugacity
     print('Fugacity')
-    print(f*1.451e-4, "psia")
+    print(f * 1.451e-4, "psia")
+
+    # Close the output file
+    close_output(f"{output_path}/output_file.txt")
+
+    return
+
+
+if __name__ == "__main__":
+    # Uncomment the following line to run problem 2
+    p2_main()
+
+    # Uncomment the following line to run problem 3
+    p3_main()
+
+
 
 
 

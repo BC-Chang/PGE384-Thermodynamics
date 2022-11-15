@@ -1,0 +1,50 @@
+**************************************************
+Initial pressure guess using Wilson's correlation:
+[2679977.7434448   290993.9217887    44069.41854696]
+K values using Wilson's correlation
+[1.55479164 0.1688204  0.02556692]
+Vapor Pressure of components [1, 2, 3] at T = 344.261K:
+[2657154.93506289  291147.68077811   42183.59588014]
+K values using Raoult's Law
+[1.54155097 0.1689096  0.02447285]
+Beta_V:  0.11656582151969302
+Dew point:  406450.808 Pa
+Bubble point: 1816604.192 Pa
+**************************************************
+Initial pressure guess using Wilson's correlation:
+[2679977.7434448   290993.9217887    44069.41854696]
+K values using Wilson's correlation
+[1.55479164 0.1688204  0.02556692]
+Vapor Pressure of components [1, 2, 3] at T = 344.261K:
+[2657154.93506289  291147.68077811   42183.59588014]
+K values using Raoult's Law
+[1.54155097 0.1689096  0.02447285]
+Beta_V:  0.11656582151969302
+Dew point:  406450.808 Pa
+Bubble point: 1816604.192 Pa
+**************************************************
+Initial pressure guess using Wilson's correlation:
+[2679977.7434448   290993.9217887    44069.41854696]
+K values using Wilson's correlation
+[1.55479164 0.1688204  0.02556692]
+Vapor Pressure of components [1, 2, 3] at T = 344.261K:
+[2657154.93506289  291147.68077811   42183.59588014]
+K values using Raoult's Law
+[1.54155097 0.1689096  0.02447285]
+Beta_V:  0.11656582151969302
+Dew point:  406450.808 Pa
+Bubble point: 1816604.192 Pa
+**************************************************
+Initial pressure guess using Wilson's correlation:
+[2679977.7434448   290993.9217887    44069.41854696]
+K values using Wilson's correlation
+[1.55479164 0.1688204  0.02556692]
+Vapor Pressure of components [1, 2, 3] at T = 344.261K:
+[2657154.93506289  291147.68077811   42183.59588014]
+K values using Raoult's Law
+[1.54155097 0.1689096  0.02447285]
+Beta_V:  0.11656582151969302
+Lower bound of Beta_V: -1.847
+Upper bound of Beta_V:  1.025
+Dew point:  406450.808 Pa
+Bubble point: 1816604.192 Pa

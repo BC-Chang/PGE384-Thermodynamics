@@ -30,3 +30,21 @@ def get_dew_point(pvap, z):
     """
 
     return 1 / np.sum(z / pvap)
+
+def get_phase_compositions(beta_v, Ki, Zv):
+    """
+    Calculate phase compositions of a component using root of Raoults law
+    :param beta_v: Root of Raoults law
+    :param Ki: Binary interactions assuming Raoults law
+    :param Zi: List of compressibility (roots of cubic) for each pure component. [Zl, Zv]
+    :return: Liquid and vapor phase compositions
+    """
+
+    xi = Zv / (1 - (1 - Ki) * beta_v)  # np.zeros_like(Zl)
+    yi = Ki * xi  # np.zeros_like(Zl)
+
+    # for i in range(len(Zl)):
+    #     xi[i] = Zl[i] / (1  - (1 - Ki[i]) * beta_v)
+    #     yi[i] = Ki[i] * xi[i]
+
+    return xi, yi

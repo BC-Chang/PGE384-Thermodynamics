@@ -6,11 +6,12 @@ from singlecomponent_utils import get_vapor_pressure
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout, redirect_stdout, close_output
 import os
-from multicomponent_utils import raoults_law, get_bubble_point, get_dew_point
+from multicomponent_utils import get_bubble_point, get_dew_point, get_phase_compositions
 from multicomponent_solve import rachford_rice_root, get_rachford_rice
 from pr_utils import fugacity_coefficient_multicomponent
 from itertools import product
 from solve import solve_cardanos, _get_real_roots
+from unit_conversions import Unit_Converter
 
 
 def p2_main():
@@ -19,15 +20,18 @@ def p2_main():
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
+    # Initialize a unit converter object
+    unit_converter = Unit_Converter()
+
     # Redirect output to the output directory
-    redirect_stdout(f"{output_path}/output_file.txt")
+    # redirect_stdout(f"{output_path}/output_file.txt")
 
     # Read in input file
     input_dict = read_input(filename="Input_Files/hw8_input_file_p2.yml")
 
     print("*"*50)
     print(f"Initial pressure guess using Wilson's correlation:")
-    print(input_dict['Pvap'])
+    print(f"{unit_converter.Pa_to_psi(input_dict['Pvap'])} psi")
     print("K values using Wilson's correlation")
     K_wilson = input_dict['Pvap']/input_dict['P']
     print(K_wilson)
@@ -35,7 +39,7 @@ def p2_main():
     # Calculate vapor pressure at the given temperature assuming pure fluid
     input_dict, eos_params = get_vapor_pressure(input_dict)
     print(f"Vapor Pressure of components [1, 2, 3] at T = {input_dict['T']}K:")
-    print(input_dict['Pvap'])
+    print(f"{unit_converter.Pa_to_psi(input_dict['Pvap'])} psi")
 
 
     print("K values using Raoult's Law")
@@ -52,14 +56,17 @@ def p2_main():
     # Rachford-Rice Internal loop using Newton Iteration
     RR_root = rachford_rice_root(K_raoults, input_dict)
 
+    xi, yi = get_phase_compositions(RR_root, K_raoults, input_dict['zv'])
+    print('Phase compositions')
+    print(xi, yi)
     bubble_pt = get_bubble_point(input_dict["Pvap"], input_dict["zi"])
     dew_pt = get_dew_point(input_dict["Pvap"], input_dict["zi"])
 
     print(f"Beta_V: ", RR_root)
-    print(f"Lower bound of Beta_V: {1 / (1 - max(K_raoults)) : .3f}")
-    print(f"Upper bound of Beta_V: {1 / (1 - min(K_raoults)) : .3f}")
-    print(f"Dew point:  {dew_pt:.3f} Pa")
-    print(f"Bubble point: {bubble_pt:.3f} Pa")
+    print(f"Lower bound of Beta_V: {1 / (1 - max(K_raoults))}")
+    print(f"Upper bound of Beta_V: {1 / (1 - min(K_raoults))}")
+    print(f"Dew point:  {unit_converter.Pa_to_psi(dew_pt)} psi")
+    print(f"Bubble point: {unit_converter.Pa_to_psi(bubble_pt)} psi")
 
     plt.style.use('seaborn')
     plt.figure()
@@ -79,7 +86,7 @@ def p2_main():
     # f_deriv_tmp = f_deriv(K_raoults, input_dict["xi"], 0.5)
 
     # Close the output file
-    close_output(f"{output_path}/output_file.txt")
+    # close_output(f"{output_path}/output_file.txt")
     return
 
 
@@ -153,7 +160,7 @@ if __name__ == "__main__":
     p2_main()
 
     # Uncomment the following line to run problem 3
-    p3_main()
+    # p3_main()
 
 
 

@@ -38,7 +38,12 @@ def _delta_positive(b, D, delta, *args, **kwargs):
     :param D: D from appendix of Wilcezek-Vera et al. (2015)
     :return: List of 1 real root and 2 complex roots
     """
-    F = ((-D) + delta**0.5)**(1/3)
+    F = ((-D) + delta**0.5)#**(1./3)
+    if F < 0:
+        F = -(-F)**(1./3)
+    else:
+        F = F**(1./3)
+
     G = ((-D) - delta**0.5)
     if G < 0:
         G = -(-G)**(1./3)
@@ -109,7 +114,6 @@ def solve_cardanos(a: np.float32, b: np.float32, c: np.float32, d: np.float32) -
     assert a != 0, "a cannot be 0. Use quadratic formula if it is"
 
     D, E, delta = _get_delta(a, b, c, d)
-
     
     if delta == 0:
         return _delta_0(b, D)

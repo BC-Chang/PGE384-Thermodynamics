@@ -25,7 +25,7 @@ def read_input(filename: str='input_file.yml',) -> dict:
 
 
     # Convert list to arrays
-    for key in ["Pc", "Tc", "w", "Pvap"]:
+    for key in ["Pc", "Tc", "w", "Pvap", "zi_ref"]:
         if not isinstance(input_dict[key], np.ndarray):
             input_dict[key] = np.array(input_dict[key])
 

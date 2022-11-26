@@ -8,29 +8,33 @@ To run the code:
 ---
 **For Tesleem:**
 
-*Project 1:*
+*Homework 8:*
 
-The work for problem 1a and 2a are shown in the attached PDF file. 
+The work for problem 1 is shown in the attached PDF file. 
 
 Input Files: 
-I use YAML format for input files. PyYAML is a dependency for the code to run. I use separate input files for problems 1 and 2, they can be found in the Input_Files/ directory. Setting ```P = None``` will automatically initialize pressure to the vapor pressure given by Wilson's correlation. You should be able to simply change the P and T in the input file and rerun Project1_main.py. I also specify the desired critical temperature, critical pressure, and acentric factor for the working fluid.
+I use YAML format for input files. PyYAML is a dependency for the code to run. I use separate input files for problems 2 and 3, they can be found in the Input_Files/ directory. Setting ```Pvap = None``` will automatically initialize vapor pressure to the vapor pressure given by Wilson's correlation. You should be able to simply change the P and T in the input file and rerun HW8_main.py. I also specify the desired critical temperature, critical pressure, and acentric factor for each fluid as a list (state variables grouped together). To change the components, simply change the Tc, Pc, and w in the appropriate fields. The order of the list matters! Each element of the list corresponds to a particular component.
 
-```Project1_main.py``` is split into 2 functions that can run independently. ```main_1()``` corresponds to Problem 1 and ```main_2()``` corresponds to Problem 2. One can independently run each problem by commenting/uncommenting the function calls within the script.
+```HW8_main.py``` is split into 2 functions that can run independently. ```p2_main()``` corresponds to Problem 2 and ```p3_main()``` corresponds to Problem 3. One can independently run each problem by commenting/uncommenting the function calls within the script.
 
-The code automatically creates an output directory if one does not already exist. For this assignment, it will be called Project1_Output/. There will be 2 subdirectories, Problem 1/ and Problem 2/. 
+The code automatically creates an output directory if one does not already exist. For this assignment, it will be called HW8_Output/. There will be 2 subdirectories, Problem 2/ and Problem 3/. 
 
-Within the Project1_Output/Problem 1/ directory will be 5 files:
-1) A .txt file with stdout outputs. This will contain the final vapor pressure and the equilibrium molar volumes at the specified temperature.
-2) A .png file titled *PV_isotherm_<temp>.png* with a plot of PV isotherm at the specified temperature.
-3) Two .xlsx files with the pressure and molar volume values from the PT flash calculation, used to plot the combined PV isotherm. Additional .xlsx files will be generated if a temperature other than 313.15K (40C) and 343.15 (70C) is used.
-4) A .png file titled "Combined_PV_isotherm" with the PV isotherm values in each .xlsx file, along with the critical point.
+Within the HW8_Output/Problem 2/ directory will be 2 files:
+1) A .txt file with stdout outputs. This will contain the final vapor pressure for each component, phase compositions, K values, Dew point and bubble point, and K values at the specified pressure and temperature.
+2) A .png file titled *Problem2C_RR.png* with the Rachford-Rice vs. $\beta_v$ plot.
 
-Within the Project1_Output/Problem 2/ directory will be 4 files:
-1) A .txt file with stdout outputs. This will contain the vapor pressure, equilibrium molar volumes at specified temperature, as well as answers to the questions posed in problems 2c and 2d. 
-2) A .png file with the PV Isotherm and Molar Gibbs Free Energy curves.
-3) A .png file stable, metastable, and unstable regions in the Molar Gibbs Free Energy curves.
-4) A .png file with the stable regions of the Molar Gibbs Free Energy curve.
+Within the HW8_Output/Problem 3/ directory will be 1 file:
+1) A .txt file with stdout outputs. This will contain the fugacity coefficients and fugacity (in psi) of each component. 
 
 Equation of State and EoS utility functions are found in ```eos.py```. Functions related to input/output are found in ```io_utils.py```. Cardano's method function and flash calculations are found in ```solve.py```. Departure functions and fugacity calculations for this assignment are in the ```pr_utils.py``` file. 
+
+Changes since project 1:
+ - Created a ```singlecomponent_utils.py``` function file that contains functions for single component flash and vapor pressure calculations
+ - Created a ```multicomponent_utils.py``` function file that contains utilities for calculating bubble point, dew point, and phase compositions
+ - Created a ```multicomponent_solve.py``` function file that contains a general-use function for performing Newton-Raphson iteration for root finding, a lambda function for the Rachford-Rice equation, and a function for finding the root of the Rachford-Rice equation.
+ - Added a ```fugacity_coefficient_multicomponent()``` function for calculating the fugacity coefficient and fugacity (in Pa)
+ - Created a ```Unit_Converter()``` class to help with unit conversions.
+
+
 
 

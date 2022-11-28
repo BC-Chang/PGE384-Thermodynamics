@@ -1,4 +1,5 @@
 import numpy as np
+from multicomponent_utils import get_phase_compositions, get_purecomponent_a_b, get_phase_fugacity, check_TBD_sign
 
 def newton_raphson(f, df, lower_bound, upper_bound, x0=None, tol=1e-6, maxiter=1000, **fkwargs):
     """
@@ -73,4 +74,100 @@ def rachford_rice_root(K, input_dict):
                           K=K, z=input_dict["zi"])
 
     return root
+
+def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
+    """
+    Perform two phase PT flash calculation
+    :param input_dict: Dictionary of input parameters
+    :param Ki: Initial guess for Ki parameter. Default: None uses Wilson's correlation
+    :return: Final Ki of each component
+    """
+
+    if P is None:
+        P = input_dict['P']
+    if T is None:
+        T = input_dict['T']
+    if zi is None:
+        zi = input_dict['zi']
+    if Ki is None:
+        print("Initial Ki set using Wilson's correlation")
+        Pri = input_dict["Pc"] / P
+        Tri = input_dict["Tc"] / T
+        Ki = Pri * np.exp((5.373 * (1 + input_dict['w']) * (1 - Tri)))
+
+    # Set initial error to be very large
+    err = 1E9
+    count = 0
+    while err > input_dict["eps"] and count <= input_dict["maxiter"]:
+        RR_root = rachford_rice_root(Ki, input_dict)
+        xi, yi = get_phase_compositions(RR_root, Ki, zi)
+        Ki = yi / xi
+
+        a_ii, b_ii = get_purecomponent_a_b(input_dict['Pc'], input_dict['Tc'], T, input_dict['w'],
+                                           input_dict['Nc'])
+
+        # Get attraction and covolume parameters of liquid phase
+        phi_l, f_l, _ = get_phase_fugacity(a_ii, b_ii, xi, input_dict)
+        phi_v, f_v, _ = get_phase_fugacity(a_ii, b_ii, yi, input_dict)
+
+        err = np.max(np.log(xi) + phi_l - np.log(yi) - phi_v)
+
+        Ki = np.exp(phi_l - phi_v)
+
+        if err < input_dict['eps']:
+            print(f"Flash calculation converged in {count} iterations")
+
+        if count >= input_dict['maxiter']:
+            print(f"Flash calculation did not converge after {input_dict['maxiter']} iterations")
+
+        count += 1
+
+    # Populate flash parameters dictionary
+    flash_params = {'a_ii': a_ii, 'b_i': b_ii,
+                    'xi': xi, 'yi': yi, 'beta_v': RR_root,
+                    'phi_l': phi_l, 'phi_v': phi_v, 'f_l': f_l, 'f_v': f_v}
+
+    return Ki, flash_params
+
+def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, input_dict: dict) -> bool:
+    """
+    Perform single-phase stability analysis
+    :param Xi: Iterable with initial guesses for Xi parameter
+    :param a_ii: Attraction parameter assuming pure component
+    :param b_ii: Covolume parameter assuming pure component
+    :param fc_z: Fugacity coefficient of phase z
+    :param input_dict: Dictionary of input parameters
+    :return: Boolean with True indicating assumed stability
+    """
+
+    # Initialize stability for each phase contained in Xi guesses
+    if Xi_guess.ndim == 1:
+        Xi_guess = Xi_guess[None, :]
+    stability = np.zeros(Xi_guess.shape[0], dtype=bool)
+
+    # Loop through each Xi guess individually
+    for i, Xi in enumerate(Xi_guess):
+        count = 0
+        err = 1E9
+        while err > input_dict['eps'] and count < input_dict['maxiter']:
+            # Get mole fractions
+            xi = Xi / np.sum(Xi)
+            # Calculate compressibility factor and fugacity coefficients of x with root selection
+            fc_x, f_x, root_x = get_phase_fugacity(a_ii, b_ii, xi, input_dict)
+            # Calculate error
+            err = np.max(np.log(Xi) + fc_x - np.log(input_dict['zi']) - fc_z)
+            # If converged, check TBD sign for stability
+            if err < input_dict['eps']:
+                stability[i] = check_TBD_sign(Xi)
+            else:
+                Xi = input_dict['zi'] * np.exp(fc_z) / np.exp(fc_x)
+
+            count += 1
+            if count == input_dict['maxiter']:
+                print(f'Stability analysis did not converge after {count} iterations.')
+
+    return stability.all()
+
+
+
 

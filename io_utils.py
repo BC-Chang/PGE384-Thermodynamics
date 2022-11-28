@@ -23,15 +23,32 @@ def read_input(filename: str='input_file.yml',) -> dict:
         if component_pvap == "None":
             input_dict["Pvap"][i] = wilson_correlation(input_dict, i)
 
+    # Construct K_ij matrix
+    if input_dict["Nc"] > 1:
+        input_dict["K_ij"] = construct_Kij(input_dict)
 
     # Convert list to arrays
-    for key in ["Pc", "Tc", "w", "Pvap", "zi_ref"]:
+    for key in ["Pc", "Tc", "w", "Pvap"]:
         if not isinstance(input_dict[key], np.ndarray):
             input_dict[key] = np.array(input_dict[key])
 
     return input_dict
 
+def construct_Kij(input_dict):
+    # Construct binary interaction matrix
+    K_ij = np.zeros((input_dict['Nc'], input_dict['Nc']))
+    Kij_nonzero_components = None
+    if 'Kij' in input_dict:
+        Kij_nonzero_components = [*input_dict['Kij'].keys()]
 
+    if Kij_nonzero_components is not None:
+        for key in Kij_nonzero_components:
+            print(key)
+            row = int(key.rsplit(" ")[-1])
+            K_ij[row, row+1:] = input_dict['Kij'][key]
+    K_ij = K_ij + K_ij.T
+
+    return K_ij
 
 
 # Write to output file

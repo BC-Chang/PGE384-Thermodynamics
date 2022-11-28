@@ -1,0 +1,30 @@
+---
+P: 35.49  # System Pressure (bar)
+T: 621.8 # Temperature (K)
+Pc:  # Critical pressure of each component (bar)
+     - 30.25  # Critical Pressure of component 1
+     - 5.53 # Critical Pressure of component 2
+
+Tc:  # Critical temperature of each component (K)
+     - 507.60  # Critical Temperature of component 1
+     - 871.16  # Critical Temperature of component 2
+
+w:   # Acentric factor of each component
+     - 0.3010  # Acentric factor of component 1
+     - 1.4678 # Acentric factor of component 2
+
+Pvap: # Vapor Pressure of each component (assuming pure fluid)
+     - None
+     - None
+
+zi:  # Mole fraction of each component
+     - 0.2
+     - 0.8
+
+Kij:  # Non-Zero Binary interactions
+      Component 0:
+          - 0.0
+
+eos: "PR"  # Equation of state — currently only vdw & PR is fully implemented
+eps: 1.0E-6  # Convergence criterion for vapor pressure calculation
+maxiter: 1000  # Maximum number of iterations for vapor pressure calculation.

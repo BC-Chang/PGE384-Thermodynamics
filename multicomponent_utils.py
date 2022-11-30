@@ -138,3 +138,18 @@ def check_TBD_sign(Xi):
     else:
         return True
 
+def get_total_composition(xi, yi, beta_v):
+    """
+    Get the total composition (z_i) from phase compositions (x_i and y_i)
+    :param xi: Composition of liquid phase
+    :param yi: Composition of vapor phase
+    :param beta_v: Phase composition (root of RR equation)
+    :return: Total composition
+    """
+
+    beta = np.array([1-beta_v, beta_v])
+    x_ij = np.array([xi, yi])
+    zi = np.sum(beta[:, None] * x_ij, axis=0)
+
+    return zi
+

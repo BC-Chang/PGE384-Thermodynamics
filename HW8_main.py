@@ -24,7 +24,7 @@ def p2_main():
     unit_converter = Unit_Converter()
 
     # Redirect output to the output directory
-    redirect_stdout(f"{output_path}/output_file.txt")
+    # redirect_stdout(f"{output_path}/output_file.txt")
 
     # Read in input file
     input_dict = read_input(filename="Input_Files/hw8_input_file_p2.yml")
@@ -36,7 +36,7 @@ def p2_main():
     print(f"\t\t{unit_converter.Pa_to_psi(input_dict['Pvap'])} psi")
     print("\tK values using Wilson's correlation (Problem 2b)")
     K_wilson = input_dict['Pvap']/input_dict['P']
-    print("\t\t",K_wilson)
+    print("\t\t", K_wilson)
 
     # Calculate vapor pressure at the given temperature assuming pure fluid
     input_dict, eos_params = get_vapor_pressure(input_dict)
@@ -53,6 +53,7 @@ def p2_main():
 
     # Rachford-Rice Internal loop using Newton Iteration
     RR_root = rachford_rice_root(K_raoults, input_dict)
+    print('RR_root', RR_root)
 
     xi, yi = get_phase_compositions(RR_root, K_raoults, input_dict['zi'])
     print("\nProblem 2c:")
@@ -95,7 +96,7 @@ def p2_main():
     plt.show()
 
     # Close the output file
-    close_output(f"{output_path}/output_file.txt")
+    # close_output(f"{output_path}/output_file.txt")
 
     return
 

@@ -9,7 +9,7 @@ from singlecomponent_utils import get_vapor_pressure
 import matplotlib.pyplot as plt
 from io_utils import read_input, pout, redirect_stdout, close_output
 import os
-from multicomponent_utils import get_bubble_point, get_dew_point, get_phase_compositions
+from multicomponent_utils import get_bubble_point, get_dew_point, get_phase_compositions, get_purecomponent_a_b
 from multicomponent_solve import rachford_rice_root, get_rachford_rice
 from pr_utils import fugacity_coefficient_multicomponent, fugacity_coefficient_phi
 from itertools import product, combinations
@@ -19,8 +19,69 @@ from scipy.signal import argrelextrema
 from scipy.optimize import fsolve, least_squares, minimize
 
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
+    # Initialize a unit converter object
+    unit_converter = Unit_Converter()
+
+    # Read in input file
+    input_dict = read_input(filename="Input_Files/hw9_input_file_2.yml")
+
+
+    pvtsim_df = pd.read_excel('C:/Users/bchan/Downloads/MWvsab.xlsx')
+    input_dict['Pc'] = pvtsim_df['Pc']
+    input_dict['Tc'] = pvtsim_df['Tc']
+    input_dict['w'] = pvtsim_df['w']
+    input_dict['MW'] = pvtsim_df['MW']
+    input_dict['zi'] = pvtsim_df['zi']
+
+    input_dict['P'] = unit_converter.bar_to_Pa(input_dict['P'])
+    input_dict['Pc'] = unit_converter.bar_to_Pa(input_dict['Pc'])
+
+    a_ii, b_i = get_purecomponent_a_b(input_dict['Pc'], input_dict['Tc'], input_dict['T'], input_dict['w'],
+                                      input_dict['Nc'])
+    print(a_ii, b_i)
+    # Create a matrix for calculating a_mix
+    a_ii = unit_converter.Pa_to_bar(a_ii)
+    plt.figure(dpi=400)
+    plt.plot(input_dict['MW'], a_ii, 'ob', alpha=0.8)
+    plt.xlabel('MW')
+    plt.ylabel('Attraction')
+    plt.grid()
+
+
+    plt.figure(dpi=400)
+    plt.plot(input_dict['MW'], b_i, 'ob', alpha=0.8)
+    plt.xlabel('MW')
+    plt.ylabel('Covolume')
+    plt.grid()
+
+    plt.show()
+
+
+    a_mix = 0
+    a_matrix = np.eye(input_dict['Nc']) * a_ii
+    a_ij = np.eye(input_dict['Nc']) * a_ii
+
+    for i, j in product(range(input_dict["Nc"]), range(input_dict["Nc"])):
+        if i != j:
+            a_ij[i, j] = np.sqrt(a_matrix[i, i] * a_matrix[j, j]) * (1 - input_dict['K_ij'][i, j])
+        a_mix += a_ij[i, j] * input_dict['zi'][i] * input_dict['zi'][j]
+
+
+        # Get attraction and covolume parameters of mixture
+        b_mix = np.sum(input_dict["zi"] * b_i)
+
+    a_mix = unit_converter.Pa_to_bar(a_mix)
+    print(f'{a_mix = }, {b_mix = }')
+
+
+
+
+
+
+
+'''
     # Create a HW output directory if one does not already exist
     output_path = "HW9_Output/Problem_1"
     if not os.path.exists(output_path):
@@ -196,7 +257,7 @@ if __name__ == "__main__":
     # Problem 1d:
     # Dimensionless tangent plane distance
     # Find approximate indices of reference points
-
+'''
 
 
 

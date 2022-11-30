@@ -30,7 +30,7 @@ zi:  # Mole fraction of each component
 
 Kij:  # Non-Zero Binary interactions
       Component 0:
-          - 0.0
+          - 0.08
 
 eos: "PR"  # Equation of state — currently only vdw & PR is fully implemented
 eps: 1.0E-6  # Convergence criterion for vapor pressure calculation

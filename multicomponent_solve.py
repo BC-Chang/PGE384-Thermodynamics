@@ -57,7 +57,7 @@ def get_rachford_rice():
 
     return f, f_deriv
 
-def rachford_rice_root(K, input_dict):
+def rachford_rice_root(K, zi, input_dict):
     """
     Find the root of the Rachford-Rice function.
     :param K: List of Binary interactions between components
@@ -71,7 +71,7 @@ def rachford_rice_root(K, input_dict):
     lower_bound = 1 / (1 - np.amax(K))
     upper_bound = 1 / (1 - np.amin(K))
     root = newton_raphson(f, f_deriv, lower_bound, upper_bound, tol=input_dict['eps'], maxiter=input_dict['maxiter'],
-                          K=K, z=input_dict["zi"])
+                          K=K, z=zi)
 
     return root
 
@@ -90,7 +90,7 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
     if zi is None:
         zi = input_dict['zi']
     if Ki is None:
-        print("Initial Ki set using Wilson's correlation")
+        # print("Initial Ki set using Wilson's correlation")
         Pri = input_dict["Pc"] / P
         Tri = input_dict["Tc"] / T
         Ki = Pri * np.exp((5.373 * (1 + input_dict['w']) * (1 - Tri)))
@@ -99,7 +99,7 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
     err = 1E9
     count = 0
     while err > input_dict["eps"] and count <= input_dict["maxiter"]:
-        RR_root = rachford_rice_root(Ki, input_dict)
+        RR_root = rachford_rice_root(Ki, zi, input_dict)
         xi, yi = get_phase_compositions(RR_root, Ki, zi)
         Ki = yi / xi
 
@@ -114,8 +114,8 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
 
         Ki = np.exp(phi_l - phi_v)
 
-        if err < input_dict['eps']:
-            print(f"Flash calculation converged in {count} iterations")
+        # if err < input_dict['eps']:
+        #     print(f"Flash calculation converged in {count} iterations")
 
         if count >= input_dict['maxiter']:
             print(f"Flash calculation did not converge after {input_dict['maxiter']} iterations")
@@ -129,7 +129,7 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
 
     return Ki, flash_params
 
-def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, input_dict: dict) -> bool:
+def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, zi, input_dict: dict) -> bool:
     """
     Perform single-phase stability analysis
     :param Xi: Iterable with initial guesses for Xi parameter
@@ -155,12 +155,12 @@ def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, input_dict: dict) -> bool
             # Calculate compressibility factor and fugacity coefficients of x with root selection
             fc_x, f_x, root_x = get_phase_fugacity(a_ii, b_ii, xi, input_dict)
             # Calculate error
-            err = np.max(np.log(Xi) + fc_x - np.log(input_dict['zi']) - fc_z)
+            err = np.max(np.log(Xi) + fc_x - np.log(zi) - fc_z)
             # If converged, check TBD sign for stability
             if err < input_dict['eps']:
                 stability[i] = check_TBD_sign(Xi)
             else:
-                Xi = input_dict['zi'] * np.exp(fc_z) / np.exp(fc_x)
+                Xi = zi * np.exp(fc_z) / np.exp(fc_x)
 
             count += 1
             if count == input_dict['maxiter']:

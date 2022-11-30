@@ -1,0 +1,104 @@
+---
+P: 287.0  # System Pressure (bar)
+T: 394.0 # Temperature (K)
+Pc:  # Critical pressure of each component (bar)
+     - 33.94387  # Critical Pressure of component 1
+     - 73.7646 # Critical Pressure of component 2
+     - 46.00155
+     - 48.83865
+     - 42.45518
+     - 37.53537
+     - 33.78607
+     - 29.68822
+     - 24.28368
+     - 18.51873
+     - 15.44953
+     - 12.26234
+
+Tc:  # Critical temperature of each component (K)
+     - 126.2  # Critical Temperature of component 1
+     - 304.2  # Critical Temperature of component 2
+     - 190.6
+     - 305.4
+     - 369.8
+     - 420.0075
+     - 465.5282
+     - 507.4
+     - 586.3737
+     - 678.5989
+     - 843.3956
+     - 1241.435
+
+w:   # Acentric factor of each component
+     - 0.04 # Acentric factor of component 1
+     - 0.225  # Acentric factor of component 2
+     - 0.008
+     - 0.098
+     - 0.152
+     - 0.187838
+     - 0.240378
+     - 0.296
+     - 0.434716
+     - 0.628909
+     - 0.859637
+     - 0.988033
+Pvap: # Vapor Pressure of each component (assuming pure fluid)
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     - None
+     -
+
+zi:  # Mole fraction of each component
+     - .0363
+     - .02991
+     - .29066
+     - .07163
+     - .06577
+     - .06076
+     - .05138
+     - .04104
+     - .20016
+     - .08462
+     - .06935
+     - .03108
+
+zi_ref:  # Reference mole fractions of each component
+     - 0.98268738
+     - 0.01731262
+
+Kij:  # Non-Zero Binary interactions
+      Component 0:
+          - -.0170
+          - 0.0311
+          - 0.0515
+          - 0.0852
+          - 0.0871
+          - 0.0965
+          - 0.0800
+          - 0.0800
+          - 0.0800
+          - 0.0800
+          - 0.0800
+      Component 1:
+          - 0.1200
+          - 0.1200
+          - 0.1200
+          - 0.1200
+          - 0.1200
+          - 0.1200
+          - 0.1000
+          - 0.1000
+          - 0.1000
+          - 0.1000
+eos: "PR"  # Equation of state — currently only vdw & PR is fully implemented
+eps: 1.0E-6  # Convergence criterion for vapor pressure calculation
+maxiter: 1000  # Maximum number of iterations for vapor pressure calculation.

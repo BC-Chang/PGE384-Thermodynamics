@@ -95,7 +95,7 @@ def p2c_main(output_path, unit_converter, input_dict):
     return fig
 
 
-def p2d_main(input_filepath, fig=None, **plot_kwargs):
+def p2d_main(input_filepath, fig=None, *pt_args, **curve_kwargs):
     output_path, unit_converter, input_dict = initialize(input_filepath=input_filepath)
     # Calculate vapor pressure at the given temperature assuming pure fluid
     pure_fluid_a_b = [_peng_robinson_ab(input_dict['Pc'][i], input_dict['Tc'][i],
@@ -156,7 +156,7 @@ def p2d_main(input_filepath, fig=None, **plot_kwargs):
 
     if fig is None:
         fig = plt.figure()
-    plt.plot(input_dict['zi'][0], delG, **plot_kwargs)
+    plt.plot(input_dict['zi'][0], delG, **curve_kwargs)
     plt.xlabel('$C_1$')
     plt.ylabel('$\Delta_{mix} G_{molar} / RT$')
     # plt.ylim([-0.1, 0.01])
@@ -168,8 +168,8 @@ def p2d_main(input_filepath, fig=None, **plot_kwargs):
     z_id_a = np.abs(flash_params['xi'][0] - input_dict['zi'][0]).argmin()
     z_id_b = np.abs(flash_params['yi'][0] - input_dict['zi'][0]).argmin()
     print(delG[z_id_a])
-    plt.plot(flash_params['xi'][0], delG[z_id_a], 'o')
-    plt.plot(flash_params['yi'][0], delG[z_id_b], 'o')
+    plt.plot(flash_params['xi'][0], delG[z_id_a], 'o', color=curve_kwargs['color'])
+    plt.plot(flash_params['yi'][0], delG[z_id_b], 'o', color=curve_kwargs['color'])
 
 
     return fig
@@ -179,24 +179,25 @@ def p2d_main(input_filepath, fig=None, **plot_kwargs):
 if __name__ == "__main__":
 
     plt.style.use('seaborn')
-    # # Problem 2a
-    # output_path, unit_converter, input_dict = initialize()
-    # p2a_main(output_path, unit_converter, input_dict)
-    # plt.show()
-    #
-    # # Problem 2b
-    # output_path, unit_converter, input_dict = initialize()
-    # p2b_main(output_path, unit_converter, input_dict)
-    # plt.show()
-    #
-    # # Problem 2c
-    # output_path, unit_converter, input_dict = initialize(input_filepath='Input_Files/project2_input_file_2c.yml')
-    # p2c_main(output_path, unit_converter, input_dict)
-    # plt.show()
+    # Problem 2a
+    output_path, unit_converter, input_dict = initialize()
+    p2a_main(output_path, unit_converter, input_dict)
+    plt.show()
+
+    # Problem 2b
+    output_path, unit_converter, input_dict = initialize()
+    p2b_main(output_path, unit_converter, input_dict)
+    plt.show()
+
+    # Problem 2c
+    output_path, unit_converter, input_dict = initialize(input_filepath='Input_Files/project2_input_file_2c.yml')
+    p2c_main(output_path, unit_converter, input_dict)
+    plt.show()
 
     # Problem 2d
-    fig = p2d_main(input_filepath='Input_Files/project2_input_file_2.yml', color='black', label='BIP=0')
-    fig = p2d_main(input_filepath='Input_Files/project2_input_file_2c.yml', fig=fig, color=[0, 153/255, 51/255], label='BIP=0.09')
+    fig = p2d_main('Input_Files/project2_input_file_2.yml', color='black', label='BIP=0')
+    fig = p2d_main('Input_Files/project2_input_file_2c.yml', fig, color=[0, 153/255, 51/255], label='BIP=0.09')
+
 
     plt.show()
 

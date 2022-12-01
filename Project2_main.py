@@ -1,5 +1,6 @@
 import numpy as np
 import os
+
 from eos import cubic_eos, get_molar_volume, _get_compressibility_factor, _peng_robinson_ab, _peng_robinson_cubic
 from singlecomponent_utils import get_vapor_pressure
 import matplotlib.pyplot as plt
@@ -14,6 +15,8 @@ from unit_conversions import Unit_Converter
 from scipy.optimize import minimize
 from itertools import product, combinations
 from scipy.signal import argrelextrema
+import ternary
+from ternary_plot_utils import initialize_ternary_diagram, compositions_to_coords
 
 
 
@@ -176,28 +179,61 @@ def p2d_main(input_filepath, fig=None, *pt_args, **curve_kwargs):
 
 
 
+
 if __name__ == "__main__":
 
     plt.style.use('seaborn')
-    # Problem 2a
-    output_path, unit_converter, input_dict = initialize()
-    p2a_main(output_path, unit_converter, input_dict)
-    plt.show()
+    # # Problem 2a
+    # output_path, unit_converter, input_dict = initialize()
+    # p2a_main(output_path, unit_converter, input_dict)
+    # plt.show()
+    #
+    # # Problem 2b
+    # output_path, unit_converter, input_dict = initialize()
+    # p2b_main(output_path, unit_converter, input_dict)
+    # plt.show()
+    #
+    # # Problem 2c
+    # output_path, unit_converter, input_dict = initialize(input_filepath='Input_Files/project2_input_file_2c.yml')
+    # p2c_main(output_path, unit_converter, input_dict)
+    # plt.show()
+    #
+    # # Problem 2d
+    # fig = p2d_main('Input_Files/project2_input_file_2.yml', color='black', label='BIP=0')
+    # fig = p2d_main('Input_Files/project2_input_file_2c.yml', fig, color=[0, 153/255, 51/255], label='BIP=0.09')
+    #
+    #
+    # plt.show()
 
-    # Problem 2b
-    output_path, unit_converter, input_dict = initialize()
-    p2b_main(output_path, unit_converter, input_dict)
-    plt.show()
+    # Problem 3
+    # Create a HW output directory if one does not already exist
+    output_path = "Project2_Output/Problem3"
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
-    # Problem 2c
-    output_path, unit_converter, input_dict = initialize(input_filepath='Input_Files/project2_input_file_2c.yml')
-    p2c_main(output_path, unit_converter, input_dict)
-    plt.show()
+    # Initialize a unit converter object
+    unit_converter = Unit_Converter()
 
-    # Problem 2d
-    fig = p2d_main('Input_Files/project2_input_file_2.yml', color='black', label='BIP=0')
-    fig = p2d_main('Input_Files/project2_input_file_2c.yml', fig, color=[0, 153/255, 51/255], label='BIP=0.09')
+    # Read in input file
+
+    input_dict = read_input(filename='Input_Files/project2_input_file_3.yml')
+    # Preprocess system pressure and critical pressures
+    input_dict['P'] = unit_converter.psi_to_Pa(input_dict['P'])
+    input_dict['Pc'][0] = unit_converter.psi_to_Pa(input_dict['Pc'][0])
+    input_dict['T'] = unit_converter.F_to_K(input_dict['T'])
+    input_dict['Pc'][1:] = unit_converter.bar_to_Pa(input_dict['Pc'][1:])
+    input_dict['Tc'][0] = unit_converter.F_to_K(input_dict['Tc'][0])
+    _, tax = initialize_ternary_diagram()
+    zi = np.array([[0.75, 0.1, 0.150], [0.7, 0.05, 0.25], [0.8, 0.1, 0.1], [0.850, 0.05, 0.1], [0.9, 0.05, 0.05]])
+    for z in zi:
+        Ki, flash_params = run_flash_main(input_dict['P'], input_dict['T'], z, input_dict)
+        x_coords = compositions_to_coords(flash_params['xi'])
+        y_coords = compositions_to_coords(flash_params['yi'])
+
+        tax.line(x_coords, y_coords, color='green', linestyle=':')
+    #
+    tax.show()
 
 
-    plt.show()
+    # plt.show()
 

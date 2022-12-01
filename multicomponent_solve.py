@@ -107,8 +107,8 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
                                            input_dict['Nc'])
 
         # Get attraction and covolume parameters of liquid phase
-        phi_l, f_l, _ = get_phase_fugacity(a_ii, b_ii, xi, input_dict)
-        phi_v, f_v, _ = get_phase_fugacity(a_ii, b_ii, yi, input_dict)
+        phi_l, f_l, _ = get_phase_fugacity(a_ii, b_ii, xi, P, input_dict)
+        phi_v, f_v, _ = get_phase_fugacity(a_ii, b_ii, yi, P, input_dict)
 
         err = np.max(np.log(xi) + phi_l - np.log(yi) - phi_v)
 
@@ -129,7 +129,7 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
 
     return Ki, flash_params
 
-def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, zi, input_dict: dict) -> bool:
+def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, zi, P, input_dict: dict) -> bool:
     """
     Perform single-phase stability analysis
     :param Xi: Iterable with initial guesses for Xi parameter
@@ -153,7 +153,7 @@ def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, zi, input_dict: dict) -> 
             # Get mole fractions
             xi = Xi / np.sum(Xi)
             # Calculate compressibility factor and fugacity coefficients of x with root selection
-            fc_x, f_x, root_x = get_phase_fugacity(a_ii, b_ii, xi, input_dict)
+            fc_x, f_x, root_x = get_phase_fugacity(a_ii, b_ii, xi, P, input_dict)
             # Calculate error
             err = np.max(np.log(Xi) + fc_x - np.log(zi) - fc_z)
             # If converged, check TBD sign for stability
@@ -167,6 +167,36 @@ def single_phase_stability(Xi_guess, a_ii, b_ii, fc_z, zi, input_dict: dict) -> 
                 print(f'Stability analysis did not converge after {count} iterations.')
 
     return stability.all()
+
+def run_flash_main(P, T, zi, input_dict):
+    """
+    Run program outlined in Problem 1 of Project 2. Perform single phase stability analysis.
+    If the given phase is unstable, perform 2 phase flash calculation
+    :return: Either 2 phase flash results or None
+    """
+
+    # Calculate compressibility factors and fugacity coefficients for phase z
+    a_ii, b_i = get_purecomponent_a_b(input_dict['Pc'], input_dict['Tc'], input_dict['T'], input_dict['w'],
+                                      input_dict['Nc'])
+    fc, f, root = get_phase_fugacity(a_ii, b_i, zi, P, input_dict)
+
+    # Initialize Ki with wilson's correlation
+    Pri = input_dict["Pc"] / P
+    Tri = input_dict["Tc"] / T
+    Ki = Pri * np.exp((5.373 * (1 + input_dict['w']) * (1 - Tri)))
+
+    # Initial guesses for Xi assuming emerging phase is vapor-like, then liquid-like
+    Xi = np.array([Ki * zi, zi / Ki])
+    # print("Initial guesses for Xi: ", Xi)
+    stable_single_phase = single_phase_stability(Xi, a_ii, b_i, fc, zi, P, input_dict)
+
+    if stable_single_phase:
+        return None, None
+        # TODO perform single phase flash
+
+    else:
+        Ki, flash_params = two_phase_flash(input_dict, P=P, zi=zi)
+        return Ki, flash_params
 
 
 

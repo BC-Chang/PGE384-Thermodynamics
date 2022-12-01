@@ -86,18 +86,18 @@ def get_multicomponent_A_B(a_ii, b_ii, zi, K_ij, P, T, Nc):
 
     return alpha, beta, gamma, a_mix, b_mix, A_mix, B_mix, a_ij
 
-def get_phase_fugacity(a_ii, b_ii, zi, input_dict):
+def get_phase_fugacity(a_ii, b_ii, zi, P, input_dict):
     alpha, beta, gamma, a_mix, b_mix, A_mix, B_mix, a_ij = get_multicomponent_A_B(a_ii, b_ii, zi, input_dict['K_ij'],
-                                                                            input_dict['P'], input_dict['T'], input_dict['Nc'])
+                                                                            P, input_dict['T'], input_dict['Nc'])
 
 
     x1, x2, x3 = solve_cardanos(1, alpha, beta, gamma)
     roots = _get_real_roots(x1, x2, x3)
     roots = np.unique(roots)
     # Get fugacity coefficient
-    fc_a, f_a = fugacity_coefficient_multicomponent(max(roots), a_mix, b_mix, input_dict['P'], input_dict['T'],
+    fc_a, f_a = fugacity_coefficient_multicomponent(max(roots), a_mix, b_mix, P, input_dict['T'],
                                                 a_ij, b_ii, zi)
-    fc_b, f_b = fugacity_coefficient_multicomponent(min(roots), a_mix, b_mix, input_dict['P'], input_dict['T'],
+    fc_b, f_b = fugacity_coefficient_multicomponent(min(roots), a_mix, b_mix, P, input_dict['T'],
                                                 a_ij, b_ii, zi)
 
     fc, f, root = choose_root(zi, [fc_a, fc_b], [f_a, f_b], roots)

@@ -43,7 +43,6 @@ def construct_Kij(input_dict):
 
     if Kij_nonzero_components is not None:
         for key in Kij_nonzero_components:
-            print(key)
             row = int(key.rsplit(" ")[-1])
             K_ij[row, row+1:] = input_dict['Kij'][key]
     K_ij = K_ij + K_ij.T

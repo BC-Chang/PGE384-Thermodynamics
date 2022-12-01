@@ -1,11 +1,5 @@
 ---
-P: # System Pressure (bar)
-     - 7.91
-     - 14.80
-     - 25.14
-     - 35.49
-     - 45.83
-     - 54.50
+P: 35.49 # System Pressure (bar)
 
 T: 621.8 # Temperature (K)
 Pc:  # Critical pressure of each component (bar)
@@ -30,7 +24,7 @@ zi:  # Mole fraction of each component
 
 Kij:  # Non-Zero Binary interactions
       Component 0:
-          - 0.08
+          - 0.09
 
 eos: "PR"  # Equation of state — currently only vdw & PR is fully implemented
 eps: 1.0E-6  # Convergence criterion for vapor pressure calculation

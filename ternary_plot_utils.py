@@ -43,3 +43,24 @@ def compositions_to_coords(compositions):
 
     return c1, c2, c3
 
+def get_axis_intercept(x_coords, y_coords):
+    """
+    Calculate the intercept on the ternary plot given x and y coordinates (compositions) from flash calculation
+    :param x_coords: Liquid phase composition from flash calculation
+    :param y_coords: Vapor phase composition from flash calculation
+    :return: Coordinates of 2 intercepts
+    """
+
+    slope_a = -1*x_coords[2] / (y_coords[2] - x_coords[2])
+    slope_b = -1*x_coords[0] / (y_coords[0] - x_coords[0])
+
+    a_axis_intercept_comp_a = x_coords[0] + slope_a * (y_coords[0] - x_coords[0])
+    a_axis_intercept = (a_axis_intercept_comp_a, 1-a_axis_intercept_comp_a, 0)
+
+    b_axis_intercept_comp_b = x_coords[1] + slope_b * (y_coords[1] - x_coords[1])
+    b_axis_intercept = (0, b_axis_intercept_comp_b, 1-b_axis_intercept_comp_b)
+
+    return a_axis_intercept, b_axis_intercept
+
+
+

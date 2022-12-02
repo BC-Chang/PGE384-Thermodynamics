@@ -119,6 +119,7 @@ def two_phase_flash(input_dict, Ki=None, P=None, T=None, zi=None):
 
         if count >= input_dict['maxiter']:
             print(f"Flash calculation did not converge after {input_dict['maxiter']} iterations")
+            flash_params = None
 
         count += 1
 
